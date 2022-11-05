@@ -85,7 +85,7 @@ ____
 #### Модель Product со следующими полями: ####
 -	ID
 -	Name
--	Counts
+-	Count
 -	Price
 -	Image
 -   Subcategory
