@@ -78,19 +78,17 @@ ____
 #### Модель Category ####
 - ID
 - Name
-- Subcategories
 #### Модель SubCategory ####
 - ID
 - Name
-- Products
+- Category
 #### Модель Product со следующими полями: ####
 -	ID
 -	Name
--	Counts
+-	Count
 -	Price
 -	Image
--	Category
--	SubCategory
+-   Subcategory
 
 ## Список endpoints и описание к ним ##
 
