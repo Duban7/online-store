@@ -89,8 +89,6 @@ ____
 -	Counts
 -	Price
 -	Image
--	Category
--	SubCategory
 
 ## Список endpoints и описание к ним ##
 
