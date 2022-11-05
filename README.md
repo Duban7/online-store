@@ -88,7 +88,7 @@ ____
 -	Counts
 -	Price
 -	Image
--   Suncategory
+-   Subcategory
 
 ## Список endpoints и описание к ним ##
 
