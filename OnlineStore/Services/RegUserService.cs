@@ -17,7 +17,19 @@ namespace OnlineStore.Services
             _regUserCollection = mongoDataBase.GetCollection<RegUser>(OnlineStoreDataBaseSettings.Value.RegUserCollectionName);
         }
 
-        public async Task<List<RegUser>> GetAsync() =>  await _regUserCollection.Find(_=>true).ToListAsync<RegUser>();
-        
+        public async Task<List<RegUser>> GetAsync() => 
+            await _regUserCollection.Find(_=>true).ToListAsync<RegUser>();
+
+        public async Task<RegUser?> GetAsync(string id) =>
+            await _regUserCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+        public async Task CreateAsync(RegUser newRegUser) =>
+            await _regUserCollection.InsertOneAsync(newRegUser);
+
+        public async Task UpdateAsync(string id, RegUser updatedRegUser) =>
+            await _regUserCollection.ReplaceOneAsync(x => x.Id == id, updatedRegUser);
+
+        public async Task RemoveAsync(string id) =>
+            await _regUserCollection.DeleteOneAsync(x => x.Id == id);
     }
 }
