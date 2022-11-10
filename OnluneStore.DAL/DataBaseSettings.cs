@@ -1,4 +1,4 @@
-﻿namespace OnlineStore
+﻿namespace OnlineStore.DAL
 {
     public class DatabaseSettings
     {

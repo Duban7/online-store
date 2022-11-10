@@ -5,13 +5,18 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="MongoDB.Driver" Version="2.18.0" />
-	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
+    <Compile Remove="DataBase\**" />
+    <Content Remove="DataBase\**" />
+    <EmbeddedResource Remove="DataBase\**" />
+    <None Remove="DataBase\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OnlineStore.BLL\OnlineStore.BLL.csproj" />
+    <ProjectReference Include="..\OnlineStore.Domain\OnlineStore.Domain.csproj" />
+    <ProjectReference Include="..\OnluneStore.DAL\OnluneStore.DAL.csproj" />
   </ItemGroup>
 
 </Project>

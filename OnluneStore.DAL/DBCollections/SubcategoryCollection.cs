@@ -2,13 +2,13 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace OnlineStore.Services
+namespace OnlineStore.DAL.DBCollections
 {
-    public class SubcategoryService
+    public class SubcategoryCollection
     {
         private readonly IMongoCollection<Subcategory> _SubcategoryCollection;
 
-        public SubcategoryService(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
+        public SubcategoryCollection(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
         {
             MongoClient mongoClient = new MongoClient(OnlineStoreDataBaseSettings.Value.ConnectionString);
 

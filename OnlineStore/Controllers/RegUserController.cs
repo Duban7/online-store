@@ -9,8 +9,8 @@ namespace OnlineStore.Controllers
     [Route("")]
     public class RegUserController : ControllerBase
     {
-        RegUserService _regUserService;
-        public RegUserController(RegUserService service)
+        RegUserCollcetion _regUserService;
+        public RegUserController(RegUserCollcetion service)
         {
             _regUserService = service;
         }

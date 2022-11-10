@@ -2,13 +2,13 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace OnlineStore.Services
+namespace OnlineStore.DAL.DBCollections
 {
-    public class ProductService
+    public class ProductCollection
     {
         private readonly IMongoCollection<Product> _ProductCollection;
 
-        public ProductService(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
+        public ProductCollection(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
         {
             MongoClient mongoClient = new MongoClient(OnlineStoreDataBaseSettings.Value.ConnectionString);
 

@@ -2,13 +2,13 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace OnlineStore.Services
+namespace OnlineStore.DAL.DBCollections
 {
-    public class BasketService
+    public class BasketCollection
     {
         private readonly IMongoCollection<Basket> _BasketCollection;
 
-        public BasketService(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
+        public BasketCollection(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
         {
             MongoClient mongoClient = new MongoClient(OnlineStoreDataBaseSettings.Value.ConnectionString);
 
