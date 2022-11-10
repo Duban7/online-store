@@ -1,6 +1,6 @@
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.Configure<OnlineStore.DatabaseSettings>(builder.Configuration.GetSection("OnlineStoreDatabase"));
-builder.Services.AddSingleton<OnlineStore.Services.RegUserCollcetion>();
+builder.Services.Configure<OnlineStore.DAL.DatabaseSettings>(builder.Configuration.GetSection("OnlineStoreDatabase"));
+builder.Services.AddSingleton<OnlineStore.DAL.DBCollections.RegUserCollcetion>();
 builder.Services.AddControllers();
 var app = builder.Build();
 app.UseRouting();

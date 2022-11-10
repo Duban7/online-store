@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineStore.Services;
+using OnlineStore.DAL.DBCollections;
 
 namespace OnlineStore.Controllers
 {
