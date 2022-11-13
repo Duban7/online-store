@@ -5,11 +5,11 @@ VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore", "OnlineStore\OnlineStore.csproj", "{B879EACF-3A41-4F60-8064-7C228180AF7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnluneStore.DAL", "OnluneStore.DAL\OnluneStore.DAL.csproj", "{A374A2B6-BDF1-4C70-A2E6-D47A3C723BEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore.DAL", "OnluneStore.DAL\OnlineStore.DAL.csproj", "{A374A2B6-BDF1-4C70-A2E6-D47A3C723BEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineStore.BLL", "OnlineStore.BLL\OnlineStore.BLL.csproj", "{53E22EFA-2120-488F-8820-19EE726A1BCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore.BLL", "OnlineStore.BLL\OnlineStore.BLL.csproj", "{53E22EFA-2120-488F-8820-19EE726A1BCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineStore.Domain", "OnlineStore.Domain\OnlineStore.Domain.csproj", "{3076B914-BE2E-4BE9-8249-90FFF4BE988D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore.Domain", "OnlineStore.Domain\OnlineStore.Domain.csproj", "{3076B914-BE2E-4BE9-8249-90FFF4BE988D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

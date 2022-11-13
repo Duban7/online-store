@@ -1,16 +1,11 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using OnlineStore.Domain.CustomAttribute;
 
-namespace OnlineStore.Models
+namespace OnlineStore.Domain.Models
 {
-    public class RegUser
+    [BsonCollectionAttribute("RegUser")]
+    public class RegUser : Model
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
         public string Password { get; set; }
         public string Login { get; set; }
-
-
     }
 }

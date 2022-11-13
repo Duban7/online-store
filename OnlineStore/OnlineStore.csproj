@@ -16,7 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OnlineStore.BLL\OnlineStore.BLL.csproj" />
     <ProjectReference Include="..\OnlineStore.Domain\OnlineStore.Domain.csproj" />
-    <ProjectReference Include="..\OnluneStore.DAL\OnluneStore.DAL.csproj" />
+    <ProjectReference Include="..\OnluneStore.DAL\OnlineStore.DAL.csproj" />
   </ItemGroup>
 
 </Project>

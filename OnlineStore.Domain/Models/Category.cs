@@ -1,13 +1,10 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using OnlineStore.Domain.CustomAttribute;
 
-namespace OnlineStore.Models
+namespace OnlineStore.Domain.Models
 {
-    public class Category
+    [BsonCollectionAttribute("Category")]
+    public class Category : Model
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
         public string Name { get; set; }
     }
 }

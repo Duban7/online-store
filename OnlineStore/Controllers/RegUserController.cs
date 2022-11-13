@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using OnlineStore.DAL.DBCollections;
+﻿using Microsoft.AspNetCore.Mvc;
+using OnlineStore.Domain.Models;
 
 namespace OnlineStore.Controllers
 {
@@ -9,15 +8,16 @@ namespace OnlineStore.Controllers
     [Route("")]
     public class RegUserController : ControllerBase
     {
-        RegUserCollcetion _regUserService;
-        public RegUserController(RegUserCollcetion service)
+        DAL.MongoDBRepository<Basket> _BasketCollection;
+        public RegUserController(DAL.MongoDBRepository<Basket> collection)
         {
-            _regUserService = service;
+            _BasketCollection = collection;
         }
         [HttpGet]
-        public async Task<List<OnlineStore.Models.RegUser>> Get()
+        public async Task<ActionResult<Basket?>> Get()
         {
-           return await _regUserService.GetAsync();
+           var basket = await _BasketCollection.GetAsync("63703352fc7378faca577c3d");
+           return basket == null ? NotFound() : basket;
         }
     }
 }
