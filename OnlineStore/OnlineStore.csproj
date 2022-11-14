@@ -19,4 +19,8 @@
     <ProjectReference Include="..\OnluneStore.DAL\OnlineStore.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

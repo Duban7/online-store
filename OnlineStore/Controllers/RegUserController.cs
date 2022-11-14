@@ -8,15 +8,15 @@ namespace OnlineStore.Controllers
     [Route("")]
     public class RegUserController : ControllerBase
     {
-        DAL.MongoDBRepository<Basket> _BasketCollection;
-        public RegUserController(DAL.MongoDBRepository<Basket> collection)
+        BLL.ProductService _productService;
+        public RegUserController(BLL.ProductService productService)
         {
-            _BasketCollection = collection;
+            _productService = productService;
         }
         [HttpGet]
-        public async Task<ActionResult<Basket?>> Get()
+        public async Task<ActionResult<List<Product>>> Get()
         {
-           var basket = await _BasketCollection.GetAsync("63703352fc7378faca577c3d");
+           var basket = await _productService.GetProducts();
            return basket == null ? NotFound() : basket;
         }
     }
