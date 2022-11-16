@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        .products{
+            display: flex;
+            align-items: flex-start;
+        }
+        .Prod{
+            border: solid;
+            border-width: 2px;
+            border-color: black;
+            border-radius: 10px;
+            width:fit-content;
+            height: fit-content;
+            margin: 10px;
+        }
+        .prodImg{
+            width: 200px;;
+            height: 200px;
+            margin: 1px;
+            border: solid;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="products"></div>
+    <script>
+        GetProducts();
+
+        async function GetProducts(){
+            const response = await fetch("/products",{
+                method: "GET",
+                headers: {"Accept":"application/json"}
+            });
+            if(response.ok === true){
+                const products = await response.json();
+                const divProducts = document.getElementsByClassName('products')[0];
+                products.forEach(async (element) => {
+                    console.log(element);
+                    divProducts.append(await addProduct(element));
+                });
+            }
+        }
+
+        async function addProduct(product){
+           const div = document.createElement('div');
+           div.className = "Prod";
+
+           const prodName = document.createElement('h1');
+           prodName.append(product.name);
+           div.append(prodName);
+
+           const img = document.createElement('img');
+           img.className = 'prodImg';
+           const responce = await fetch("/products/"+product.id,{
+                method: "GET",
+                headers: {"Accept":"image/png"}
+            });
+            if(responce.ok===true) {
+                const ResBlob = await responce.blob();
+                img.src = URL.createObjectURL(ResBlob);
+            }
+            else{
+                console.error("грустно");
+            }
+            div.append(img);
+
+           const prodPrice = document.createElement('h2');
+           prodPrice.append('price: '+product.price);
+           div.append(prodPrice);
+
+           return div;
+        }
+    </script>
+</body>
+</html>

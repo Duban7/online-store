@@ -9,11 +9,11 @@ namespace OnlineStore.DAL
     {
         private readonly IMongoCollection<TModel> _TModelCollection;
 
-        public MongoDBRepository(DatabaseSettings OnlineStoreDataBaseSettings)
+        public MongoDBRepository(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
         {
-            MongoClient mongoClient = new MongoClient(OnlineStoreDataBaseSettings.ConnectionString);
+            MongoClient mongoClient = new MongoClient(OnlineStoreDataBaseSettings.Value.ConnectionString);
 
-            IMongoDatabase mongoDataBase = mongoClient.GetDatabase(OnlineStoreDataBaseSettings.DatabaseName);
+            IMongoDatabase mongoDataBase = mongoClient.GetDatabase(OnlineStoreDataBaseSettings.Value.DatabaseName);
 
             _TModelCollection = mongoDataBase.GetCollection<TModel>(GetCollectionName(typeof(TModel)));
         }
