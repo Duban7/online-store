@@ -8,26 +8,42 @@ namespace OnlineStore.BLL.ProductServices
 {
     public class ProductService
     {
-        private readonly IRepository<Product> _repository;
+        private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<Category> _categoryRepository;
+        private readonly IRepository<Subcategory> _subcategoryRepository;
         private readonly ILogger<ProductService> _logger;
 
-        public ProductService(IRepository<Product> repository, ILogger<ProductService> logger)
+        public ProductService(IRepository<Product> productRepository, IRepository<Category> categoryRepository, IRepository<Subcategory> subcategoryRepository, ILogger<ProductService> logger)
         {
-            _repository = repository;
+            _productRepository = productRepository;
             _logger = logger;
+            _categoryRepository = categoryRepository;
+            _subcategoryRepository = subcategoryRepository;
         }
+
+      
         public async Task<List<Product>> GetProducts()
         {
             _logger.LogInformation("Getting all products");
-            return await _repository.GetAsync();
+
+            return await _productRepository.GetAsync();
         }
+
         public async Task<List<Product>> GetProducts(Expression< Func<Product,bool>> predicante)
         {
-            return await _repository.GetAsync( predicante);
+            return await _productRepository.GetAsync( predicante);
         }
+
         public async Task<Product> GetProduct(string id)
         {
-            return await _repository.GetAsync(id);
+            return await _productRepository.GetAsync(id);
+        }
+
+        public async Task<List<Category>> GetCategories()
+        {
+            _logger.LogInformation("Getting all categories");
+
+            return await _categoryRepository.GetAsync();
         }
     }
 }

@@ -29,8 +29,10 @@
 <body>
 
     <div class="products"></div>
+    <div class="categories"></div>
     <input type=button value="Показать все товары" onClick="GetProducts();">
     <input type=button value="Показать  товар" onClick="GetProduct();">
+    <input type=button value="Показать  категории" onClick="GetCategories();">
     <script>
 
         async function GetProducts() {
@@ -60,6 +62,21 @@
             }
         }
 
+        async function GetCategories() {
+            const response = await fetch("/products/category", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const categories = await response.json();
+                const divCategories = document.getElementsByClassName('categories')[0];
+                categories.forEach(async (element) => {
+                    console.log(element);
+                    divCategories.append(await addCategory(element));
+                    divCategories.append(document.createElement("br"));
+                });
+            }
+        }
         async function addProduct(product) {
             const div = document.createElement('div');
             div.className = "Prod";
@@ -90,6 +107,13 @@
             return div;
         }
 
+        async function addCategory(category) {
+
+            const cat = document.createElement('label');
+            cat.append(category.name);
+           
+            return cat;
+        }
 
     </script>
 
