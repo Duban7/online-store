@@ -71,5 +71,22 @@ namespace OnlineStore.Controllers
         {
             return await _accountService.GetUser(id);
         }
+
+        [HttpPut]
+        [Route("clients/{id}")]
+        [Authorize]
+        public async Task<ActionResult<User>> UpdateAccount([FromBody] Account account)
+        {
+            User updatedUser = await _accountService.UpdateAccount(account);
+
+            return updatedUser == null ? BadRequest() : Ok(updatedUser);
+        }
+
+        [HttpDelete]
+        [Route("clients/{id}")]
+        [Authorize]
+        public async Task<ActionResult> DeleteAccount(string id) =>
+            await _accountService.DeleteUser(id) == false ? BadRequest() : NoContent();
+
     }
 }

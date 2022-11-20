@@ -38,8 +38,8 @@ namespace OnlineStore.DAL
         public async Task CreateAsync(TModel newTModel) =>
             await _TModelCollection.InsertOneAsync(newTModel);
 
-        public async Task UpdateAsync(string id, TModel updatedTModel) =>
-            await _TModelCollection.ReplaceOneAsync(x => x.Id == id, updatedTModel);
+        public async Task UpdateAsync(TModel updatedTModel) =>
+            await _TModelCollection.ReplaceOneAsync(x => x.Id == updatedTModel.Id, updatedTModel);
 
         public async Task RemoveAsync(string id) =>
             await _TModelCollection.DeleteOneAsync(x => x.Id == id);
