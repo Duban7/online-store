@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using OnlineStore.Domain.CustomAttribute;
 using OnlineStore.Domain.Models;
+using System.Linq.Expressions;
 
 namespace OnlineStore.DAL
 {
@@ -23,16 +24,16 @@ namespace OnlineStore.DAL
         }
         public async Task<List<TModel>> GetAsync() =>
             await _TModelCollection.Find(_ => true).ToListAsync<TModel>();
-        public async Task<List<TModel>?> GetAsync(Func<TModel,bool> predicant) =>
-            await _TModelCollection.Find(_ => true).ToListAsync<TModel>();
+        public async Task<List<TModel>?> GetAsync(Expression< Func<TModel,bool>> predicant) =>
+            await _TModelCollection.Find(predicant).ToListAsync<TModel>();
         public async Task<TModel?> GetAsync(string id) =>
             await _TModelCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
         public async Task CreateAsync(TModel newTModel) =>
             await _TModelCollection.InsertOneAsync(newTModel);
 
-        public async Task UpdateAsync(string id, TModel updatedTModel) =>
-            await _TModelCollection.ReplaceOneAsync(x => x.Id == id, updatedTModel);
+        public async Task UpdateAsync(TModel updatedTModel) =>
+            await _TModelCollection.ReplaceOneAsync(x => x.Id == updatedTModel.Id,updatedTModel);
 
         public async Task RemoveAsync(string id) =>
             await _TModelCollection.DeleteOneAsync(x => x.Id == id);

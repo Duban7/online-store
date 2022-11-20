@@ -9,7 +9,8 @@ namespace OnlineStore.Controllers
     [Route("")]
     public class ProductController : ControllerBase
     {
-        ProductService _productService;
+        private readonly ProductService _productService;
+
         public ProductController(ProductService productService)
         {
             _productService = productService;

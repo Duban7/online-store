@@ -2,6 +2,7 @@
 using OnlineStore.DAL;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace OnlineStore.BLL.ProductServices
 {
@@ -20,9 +21,9 @@ namespace OnlineStore.BLL.ProductServices
             _logger.LogInformation("Getting all products");
             return await _repository.GetAsync();
         }
-        public async Task<List<Product>> GetProducts(Func<Product,bool> predicante)
+        public async Task<List<Product>> GetProducts(Expression< Func<Product,bool>> predicante)
         {
-            return await _repository.GetAsync(predicante);
+            return await _repository.GetAsync( predicante);
         }
         public async Task<Product> GetProduct(string id)
         {
