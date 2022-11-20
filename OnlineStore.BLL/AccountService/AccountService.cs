@@ -12,10 +12,11 @@ namespace OnlineStore.BLL.AccountService
         
         public readonly ILogger<AccountService> logger;
 
-        public AccountService(IRepository<User> userRepository, IRepository<RegUser> regUserRepository, ILogger<AccountService> logger)
+        public AccountService(IRepository<User> userRepository, IRepository<RegUser> regUserRepository, IRepository<Basket> basketRepository, ILogger<AccountService> logger)
         {
             _userRepository = userRepository;
             _regUserRepository = regUserRepository;
+            _basketRepository = basketRepository;
             this.logger = logger;
         }
         public async Task<User> CreateAccount(Account newAccount)
