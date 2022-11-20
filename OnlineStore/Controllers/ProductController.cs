@@ -7,10 +7,10 @@ namespace OnlineStore.Controllers
 
     [ApiController]
     [Route("")]
-    public class RegUserController : ControllerBase
+    public class ProductController : ControllerBase
     {
         ProductService _productService;
-        public RegUserController(ProductService productService)
+        public ProductController(ProductService productService)
         {
             _productService = productService;
         }
