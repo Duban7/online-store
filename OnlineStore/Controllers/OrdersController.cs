@@ -10,7 +10,8 @@ namespace OnlineStore.Controllers
     [Route("")]
     public class OrdersController : ControllerBase
     {
-        OrderService _orderService;
+        private readonly OrderService _orderService;
+
         public OrdersController(OrderService orderService)
         {
             _orderService = orderService;
@@ -19,9 +20,9 @@ namespace OnlineStore.Controllers
  
         [HttpGet]
         [Route("/clients/{IdUser}/orders")]
-        public async Task<ActionResult<List<Order>>> Get(string IdUser)
+        public async Task<ActionResult<List<Order>>> GetOrders(string IdUser)
         {
-            var orders = await _orderService.GetBasket(p => p.IdUser == IdUser);
+            var orders = await _orderService.GetOrders(p => p.IdUser == IdUser);
 
             return orders == null ? NotFound() : Ok(orders);
         }
@@ -38,7 +39,7 @@ namespace OnlineStore.Controllers
 
         [HttpPost]
         [Route("clients/{IdUser}/basket")]
-       public async Task<ActionResult<Order>> CreateNewOrder([FromBody] Basket newOrder)
+        public async Task<ActionResult<Order>> CreateNewOrder([FromBody] Basket newOrder)
         {
             Order order = await _orderService.CreateOrder(newOrder);
 

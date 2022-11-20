@@ -25,10 +25,6 @@ namespace OnlineStore.BLL.OrderServices
             return await _orderrepository.GetAsync(predicante);
         }
 
-        public async Task<Basket> GetBasket(string id)
-        {
-            return await _basketrepository.GetAsync(id);
-        }
         public async Task<List<Basket>> GetBasket(Expression<Func<Basket, bool>> predicante)
         {
             return await _basketrepository.GetAsync(predicante);
@@ -36,7 +32,7 @@ namespace OnlineStore.BLL.OrderServices
 
         public async Task<Order> CreateOrder(Basket newBasket)
         {
-            DateTime timeNow = new DateTime();
+            DateTime timeNow = DateTime.UtcNow;
             string id = (_orderrepository as MongoDBRepository<Order>).GenerateID();
             Order newOrder = new Order()
             {
