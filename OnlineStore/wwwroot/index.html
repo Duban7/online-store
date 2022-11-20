@@ -18,7 +18,7 @@
             margin: 10px;
         }
         .prodImg{
-            width: 200px;;
+            width: 200px;
             height: 200px;
             margin: 1px;
             border: solid;
@@ -27,16 +27,18 @@
     </style>
 </head>
 <body>
-    <div class="products"></div>
-    <script>
-        GetProducts();
 
-        async function GetProducts(){
-            const response = await fetch("/products",{
+    <div class="products"></div>
+    <input type=button value="Показать все товары" onClick="GetProducts();">
+    <input type=button value="Показать  товар" onClick="GetProduct();">
+    <script>
+
+        async function GetProducts() {
+            const response = await fetch("/products", {
                 method: "GET",
-                headers: {"Accept":"application/json"}
+                headers: { "Accept": "application/json" }
             });
-            if(response.ok === true){
+            if (response.ok === true) {
                 const products = await response.json();
                 const divProducts = document.getElementsByClassName('products')[0];
                 products.forEach(async (element) => {
@@ -46,35 +48,50 @@
             }
         }
 
-        async function addProduct(product){
-           const div = document.createElement('div');
-           div.className = "Prod";
-
-           const prodName = document.createElement('h1');
-           prodName.append(product.name);
-           div.append(prodName);
-
-           const img = document.createElement('img');
-           img.className = 'prodImg';
-           const responce = await fetch("/products/"+product.id,{
+        async function GetProduct() {
+            const response = await fetch("/products/637a7d0f64ba672b1c3ba1fe", {
                 method: "GET",
-                headers: {"Accept":"image/png"}
+                headers: { "Accept": "application/json" }
             });
-            if(responce.ok===true) {
+            if (response.ok === true) {
+                const product = await response.json();
+                const divProduct = document.getElementsByClassName('products')[0];
+                divProduct.append(await addProduct(product));
+            }
+        }
+
+        async function addProduct(product) {
+            const div = document.createElement('div');
+            div.className = "Prod";
+
+            const prodName = document.createElement('h1');
+            prodName.append(product.name);
+            div.append(prodName);
+
+            const img = document.createElement('img');
+            img.className = 'prodImg';
+            const responce = await fetch("/products/" + product.id + "/image", {
+                method: "GET",
+                headers: { "Accept": "image/png" }
+            });
+            if (responce.ok === true) {
                 const ResBlob = await responce.blob();
                 img.src = URL.createObjectURL(ResBlob);
             }
-            else{
+            else {
                 console.error("грустно");
             }
             div.append(img);
 
-           const prodPrice = document.createElement('h2');
-           prodPrice.append('price: '+product.price);
-           div.append(prodPrice);
+            const prodPrice = document.createElement('h2');
+            prodPrice.append('price: ' + product.price);
+            div.append(prodPrice);
 
-           return div;
+            return div;
         }
+
+
     </script>
+
 </body>
 </html>
