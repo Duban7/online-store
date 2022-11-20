@@ -42,8 +42,6 @@
     </div>
     <script>       
         async function CreateOrder() {
-            alert("lox");
-            const products = null;
             const dateNow = new Date();
             const IdUser = document.getElementById("orderUserId").value;
             const response = await fetch("clients/" + IdUser + "/basket", {
@@ -63,7 +61,6 @@
                 BasketTotalSum.id = "orderSum";
                 alert(BasketTotalSum.innerText);
                 divBasket.append(BasketTotalSum)
-                const products = getBasket[0].products;
                 console.log(products);
                 const BasketProducts = document.createElement('h1');
                 BasketProducts.append('Products: ' + getBasket[0].products[0].name);
