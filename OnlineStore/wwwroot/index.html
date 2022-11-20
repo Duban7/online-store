@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        .products {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .Prod {
+            border: solid;
+            border-width: 2px;
+            border-color: black;
+            border-radius: 10px;
+            width: fit-content;
+            height: fit-content;
+            margin: 10px;
+        }
+
+        .prodImg {
+            width: 200px;
+            ;
+            height: 200px;
+            margin: 1px;
+            border: solid;
+            border-radius: 10px;
+        }
+    </style>
+    
+</head>
+<body>
+    
+    <div id="userId">
+        <p>Введите id пользователя</p>
+        <input type="text" id="orderUserId" />
+    </div>
+    <div class="myBasket"></div>
+    <div>
+        <input type="button" id="sendOrder" value="Создать заказ" onclick="CreateOrder();" />
+    </div>
+    <script>       
+        async function CreateOrder() {
+            alert("lox");
+            const products = null;
+            const dateNow = new Date();
+            const IdUser = document.getElementById("orderUserId").value;
+            const response = await fetch("clients/" + IdUser + "/basket", {
+                method: "GET",
+                headers: { "Accept": "application/json" },
+            });
+            if (response.ok === true) {
+                
+                const getBasket = await response.json();
+                const divBasket = document.getElementsByClassName('myBasket')[0];
+                console.log(getBasket);
+
+                //IdUser = getBasket[0].idUser;
+                const BasketTotalSum = document.createElement('h1');
+                BasketTotalSum.append('Order price: ' + getBasket[0].totalSum);
+                BasketTotalSum.value = getBasket[0].totalSum;
+                BasketTotalSum.id = "orderSum";
+                alert(BasketTotalSum.innerText);
+                divBasket.append(BasketTotalSum)
+                const products = getBasket[0].products;
+                console.log(products);
+                const BasketProducts = document.createElement('h1');
+                BasketProducts.append('Products: ' + getBasket[0].products[0].name);
+                BasketProducts.value = getBasket[0].products;
+                BasketProducts.id = "orderProds";
+                divBasket.append(BasketProducts);
+                
+            }
+            else  // если произошла ошибка, получаем код статуса
+                console.log("Status: ", response.status);
+            
+            
+            const response2 = await fetch("clients/" + IdUser + "/basket", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    Date: dateNow,
+                    TotalSum: document.getElementById("orderSum").value,
+                    Products: document.getElementById("orderProds").value,
+                    IdUser: IdUser
+                })
+            });
+            if (response2.ok === true) {
+                alert("Order created! :)");
+            }
+            else  // если произошла ошибка, получаем код статуса
+                console.log("Status: ", response2.status);
+                
+        }
+    </script>
+</body>
+</html>

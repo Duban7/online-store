@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using OnlineStore.Domain.CustomAttribute;
 using OnlineStore.Domain.Models;
+using System.Linq.Expressions;
 
 namespace OnlineStore.DAL
 {
@@ -23,8 +25,8 @@ namespace OnlineStore.DAL
         }
         public async Task<List<TModel>> GetAsync() =>
             await _TModelCollection.Find(_ => true).ToListAsync<TModel>();
-        public async Task<List<TModel>?> GetAsync(Func<TModel,bool> predicant) =>
-            await _TModelCollection.Find(_ => true).ToListAsync<TModel>();
+        public async Task<List<TModel>?> GetAsync(Expression<Func<TModel,bool>> predicant) =>
+            await _TModelCollection.Find(predicant).ToListAsync<TModel>();
         public async Task<TModel?> GetAsync(string id) =>
             await _TModelCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
@@ -36,5 +38,7 @@ namespace OnlineStore.DAL
 
         public async Task RemoveAsync(string id) =>
             await _TModelCollection.DeleteOneAsync(x => x.Id == id);
+        public string GenerateID() =>
+            ObjectId.GenerateNewId().ToString();
     }
 }
