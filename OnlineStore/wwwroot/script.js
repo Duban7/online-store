@@ -130,6 +130,7 @@ function registrationButtonClick(e){
 
         passwordInput.after(logInButton);
 
+        registrationButton.removeEventListener('click', registration);
         registrationButton.addEventListener('click', registrationButtonClick);
     };
     backSpan.className = 'formBack';
