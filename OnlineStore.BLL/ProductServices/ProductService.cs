@@ -45,5 +45,11 @@ namespace OnlineStore.BLL.ProductServices
 
             return await _categoryRepository.GetAsync();
         }
+        public async Task<List<Subcategory>> GetSubcategories(string categoryName)
+        {
+          
+            return await _subcategoryRepository.GetAsync(sub=>sub.Category.Name== categoryName);
+
+        }
     }
 }

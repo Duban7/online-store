@@ -30,9 +30,12 @@
 
     <div class="products"></div>
     <div class="categories"></div>
+    <div class="subcategories"></div>
     <input type=button value="Показать все товары" onClick="GetProducts();">
     <input type=button value="Показать  товар" onClick="GetProduct();">
     <input type=button value="Показать  категории" onClick="GetCategories();">
+    <input type=button value="Показать  субкатегории" onClick="GetSubcategories();">
+
     <script>
 
         async function GetProducts() {
@@ -77,6 +80,23 @@
                 });
             }
         }
+
+        async function GetSubcategories() {
+            const response = await fetch("/products/Electronics/subcategory", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const subcategories = await response.json();
+                const divSubcategories = document.getElementsByClassName('subcategories')[0];
+                subcategories.forEach(async (element) => {
+                    console.log(element);
+                    divSubcategories.append(await addSubcategory(element));
+                    divSubcategories.append(document.createElement("br"));
+                });
+            }
+        }
+
         async function addProduct(product) {
             const div = document.createElement('div');
             div.className = "Prod";
@@ -111,8 +131,16 @@
 
             const cat = document.createElement('label');
             cat.append(category.name);
-           
+
             return cat;
+        }
+
+        async function addSubcategory(subcategory) {
+
+            const subcat = document.createElement('label');
+            subcat.append(subcategory.name);
+
+            return subcat;
         }
 
     </script>

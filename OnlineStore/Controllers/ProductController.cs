@@ -50,5 +50,14 @@ namespace OnlineStore.Controllers
 
             return category == null ? NotFound() : Ok(category);
         }
+
+        [HttpGet]
+        [Route("/products/{category}/subcategory")]
+        public async Task<ActionResult<Subcategory>> GetSubategories(string category)
+        {
+            var subcategory = await _productService.GetSubcategories(category);
+
+            return subcategory == null ? NotFound() : Ok(subcategory);
+        }
     }
 }
