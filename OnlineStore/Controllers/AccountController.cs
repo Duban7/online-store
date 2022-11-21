@@ -1,14 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using MongoDB.Bson.IO;
 using OnlineStore.BLL.AccountService;
 using OnlineStore.BLL.AccountService.Model;
-using OnlineStore.DAL;
 using OnlineStore.Domain.Models;
-using OnlineStore.Options;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace OnlineStore.Controllers
 {
@@ -26,11 +20,19 @@ namespace OnlineStore.Controllers
 
         [HttpPost]
         [Route("clients/registration")]
-        public async Task<ActionResult<User>> CreateAccount([FromBody] Account newAccount)
+        public async Task<ActionResult<object>> CreateAccount([FromBody] Account newAccount)
         {
             User newUser = await _accountService.CreateAccount(newAccount);
 
-            return newUser == null ? BadRequest() : Ok(newUser);
+            if (newUser == null) return BadRequest();
+
+            var response = new
+            {
+                access_token = _accountService.GenerateJwtToken(newUser),
+                user = newUser
+            };
+
+            return Ok(response);
         }
 
         [HttpPost]
@@ -41,23 +43,9 @@ namespace OnlineStore.Controllers
 
             if (foundUser == null) return Unauthorized();
 
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, foundUser.Name),
-                new Claim(ClaimTypes.Email, foundUser.Email),
-                new Claim(ClaimTypes.MobilePhone, foundUser.Phone)
-            };
-            JwtSecurityToken jwt = new JwtSecurityToken(
-                issuer: JwtOptions.ISSUER,
-                audience: JwtOptions.AUDIENCE,
-                claims: claims,
-                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(2)),
-                signingCredentials: new SigningCredentials(JwtOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
             var response = new
             {
-                access_token = encodedJwt,
+                access_token = _accountService.GenerateJwtToken(foundUser),
                 user = foundUser
             };
 
@@ -67,20 +55,19 @@ namespace OnlineStore.Controllers
         [HttpGet]
         [Route("clients/{id}")]
         [Authorize]
-        public async Task<ActionResult<User>> GetUser(string id)
+        public async Task<ActionResult> GetUser(string id)
         {
-            return await _accountService.GetUser(id);
+            Account foundAccount = await _accountService.GetUser(id);
+
+            return foundAccount.User==null || foundAccount.RegUser==null || foundAccount==null?BadRequest():Ok(foundAccount);
         }
 
         [HttpPut]
-        [Route("clients/{id}")]
+        [Route("clients/update")]
         [Authorize]
-        public async Task<ActionResult<User>> UpdateAccount([FromBody] Account account)
-        {
-            User updatedUser = await _accountService.UpdateAccount(account);
-
-            return updatedUser == null ? BadRequest() : Ok(updatedUser);
-        }
+        public async Task<ActionResult> UpdateAccount([FromBody] Account account) =>
+            await _accountService.UpdateAccount(account) == null ? BadRequest() : NoContent();
+        
 
         [HttpDelete]
         [Route("clients/{id}")]

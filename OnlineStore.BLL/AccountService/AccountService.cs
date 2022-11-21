@@ -1,7 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using OnlineStore.BLL.AccountService.Model;
 using OnlineStore.DAL;
 using OnlineStore.Domain.Models;
+using OnlineStore.Options;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+
 namespace OnlineStore.BLL.AccountService
 {
     public class AccountService
@@ -57,21 +62,28 @@ namespace OnlineStore.BLL.AccountService
             return newUser;
         }
 
-        public async Task<User> UpdateAccount(Account account)
+        public async Task<bool> UpdateAccount(Account account)
         {
-            var regUser = await _regUserRepository.GetAsync(account.RegUser.Id);
-            var user = await _userRepository.GetAsync(account.User.Id);
+            string id = account.RegUser.Id;
+            var regUser = await _regUserRepository.GetAsync(id);
+            var user = await _userRepository.GetAsync(id);
 
-            if (user == null || regUser==null)
+            if (user == null || regUser == null)
             {
                 logger.LogError("User doesn't exist");
-                return null;
+                return false;
             }
 
             await _regUserRepository.UpdateAsync(account.RegUser);
             await _userRepository.UpdateAsync(account.User);
 
-            return account.User;
+            account = new Account()
+            {
+                 RegUser = await _regUserRepository.GetAsync(id),
+                 User =  await _userRepository.GetAsync(id),
+            };
+
+            return true;
         }
 
         public async Task<bool> DeleteUser (string id)
@@ -105,7 +117,31 @@ namespace OnlineStore.BLL.AccountService
             return null;
         }
 
-        public async Task<User?> GetUser(string id) =>
-            await _userRepository.GetAsync(id);
+        public async Task<Account?> GetUser(string id) =>
+            new Account()
+            {
+                User = await _userRepository.GetAsync(id),
+                RegUser = await _regUserRepository.GetAsync(id)
+            };
+
+
+        public string GenerateJwtToken(User user)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Name),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.MobilePhone, user.Phone)
+            };   
+            JwtSecurityToken jwt = new JwtSecurityToken(
+                issuer: JwtOptions.ISSUER,
+                audience: JwtOptions.AUDIENCE,
+                claims: claims,
+                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(2)),
+                signingCredentials: new SigningCredentials(JwtOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            return encodedJwt;
+        }
     }
 }

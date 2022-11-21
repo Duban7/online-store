@@ -2,7 +2,7 @@
 
 namespace OnlineStore.Domain.Models
 {
-    [BsonCollectionAttribute("SubCategory")]
+    [BsonCollectionAttribute("Subcategory")]
     public class Subcategory : Model
     {
         public string Name { get; set; }
