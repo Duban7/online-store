@@ -144,7 +144,7 @@ ____
     - Get api/Products, don’t need authorization;
         - 200 - OK, array of product model
         - 404 - NotFound
--	Просмотр котегорий:
+-	Просмотр категорий:
     - GET api/Products/Category, don’t need authorization;
         - 200 - OK, array of SubcategoryModel
         - 404 - NotFound
