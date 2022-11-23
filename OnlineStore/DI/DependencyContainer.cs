@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using OnlineStore.BLL.AccountService;
+using OnlineStore.BLL.AccountService.Model;
 using OnlineStore.DAL.Implementation;
 using OnlineStore.DAL.Interfaces;
 using OnlineStore.Options;
+using OnlineStore.Validators;
 
 namespace OnlineStore.DI
 {
@@ -32,6 +35,8 @@ namespace OnlineStore.DI
             service.AddTransient<IRegUserRepository, RegUserRepository>();
 
             service.AddTransient<IBasketRepository, BasketRepository>();
+
+            service.AddScoped<IValidator<Account>, AccountValidator>();
 
             service.AddTransient<AccountService>();
         }

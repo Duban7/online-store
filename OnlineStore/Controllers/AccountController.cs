@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineStore.BLL.AccountService;
 using OnlineStore.BLL.AccountService.Model;
@@ -12,17 +14,32 @@ namespace OnlineStore.Controllers
     public class AccountController : ControllerBase
     {
         private readonly AccountService _accountService;
+        private readonly IValidator<Account> _accountValidator;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(AccountService accountService)
+        public AccountController(AccountService accountService, IValidator<Account> accountValidator, ILogger<AccountController> logger)
         {
             _accountService = accountService;
+            _accountValidator = accountValidator;
+            _logger = logger;
         }
 
         [HttpPost]
         [Route("clients/registration")]
         public async Task<ActionResult<object>> CreateAccount([FromBody] Account newAccount)
         {
-            User newUser = await _accountService.CreateAccount(newAccount);
+            ValidationResult result = await _accountValidator.ValidateAsync(newAccount);
+
+            if (!result.IsValid)
+            {
+                _logger.LogError("Ошибка валидации");
+                foreach (var error in result.Errors) _logger.LogError(error.ErrorMessage);
+                return BadRequest(result.Errors);
+            }
+
+            _logger.LogInformation("Валидация прошла успешно");
+
+            User? newUser = await _accountService.CreateAccount(newAccount);
 
             if (newUser == null) return BadRequest();
 

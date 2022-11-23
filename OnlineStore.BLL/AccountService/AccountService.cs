@@ -12,15 +12,15 @@ namespace OnlineStore.BLL.AccountService
 {
     public class AccountService
     {
-        private readonly IRepository<User> _userRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IRegUserRepository _regUserRepository;
-        private readonly IRepository<Basket> _basketRepository;
+        private readonly IBasketRepository _basketRepository;
         
         public readonly ILogger<AccountService> logger;
 
-        public AccountService(IRepository<User> userRepository,
+        public AccountService(IUserRepository userRepository,
                             IRegUserRepository regUserRepository,
-                            IRepository<Basket> basketRepository,
+                            IBasketRepository basketRepository,
                             ILogger<AccountService> logger)
         {
             _userRepository = userRepository;
