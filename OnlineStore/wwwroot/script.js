@@ -196,6 +196,13 @@ async function registration(e){
             const data = await response.json();
             sessionStorage.setItem("JwtToken", data.access_token);
             sessionStorage.setItem("id", data.user.id);
+
+            const modal = document.getElementsByClassName('modal')[0];
+            modal.removeChild(document.getElementsByClassName('accountForm')[0]);
+            modal.style.display = 'none';
+
+            const logInButton = document.getElementsByClassName('SignInButton')[0];
+            logInButton.style.display = 'none';
         }
         else  // если произошла ошибка, получаем код статуса
             console.log("Status: ", response.status);
@@ -269,6 +276,9 @@ async function deleteAccount(e){
             const modal = document.getElementsByClassName('modal')[0];
             modal.removeChild(document.getElementsByClassName('accountForm')[0]);
             modal.style.display = 'none'; 
+
+            const logInButton = document.getElementsByClassName('SignInButton')[0];
+            logInButton.style.display = 'initial';
         }
         else  // если произошла ошибка, получаем код статуса
             console.log("Status: ", response.status);

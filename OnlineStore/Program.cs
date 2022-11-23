@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using OnlineStore.BLL.AccountService;
 using OnlineStore.DAL;
+using OnlineStore.DAL.Implementation;
+using OnlineStore.DAL.Interfaces;
 using OnlineStore.Domain.Models;
 using OnlineStore.Options;
 
@@ -22,9 +24,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("OnlineStoreDatabase"));
-builder.Services.AddSingleton<IRepository<User>,MongoDBRepository<User>>();
-builder.Services.AddSingleton<IRepository<RegUser>, MongoDBRepository<RegUser>>();
-builder.Services.AddSingleton<IRepository<Basket>, MongoDBRepository<Basket>>();
+builder.Services.AddSingleton<IUserRepository,UserRepository>();
+builder.Services.AddSingleton<IRegUserRepository, RegUserRepository>();
+builder.Services.AddSingleton<IBasketRepository, BasketRepository>();
 builder.Services.AddSingleton<AccountService>();
 builder.Services.AddControllers();
 

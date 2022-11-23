@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 using OnlineStore.BLL.AccountService.Model;
-using OnlineStore.DAL;
+using OnlineStore.DAL.Interfaces;
 using OnlineStore.Domain.Models;
 using OnlineStore.Options;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,29 +13,32 @@ namespace OnlineStore.BLL.AccountService
     public class AccountService
     {
         private readonly IRepository<User> _userRepository;
-        private readonly IRepository<RegUser> _regUserRepository;
+        private readonly IRegUserRepository _regUserRepository;
         private readonly IRepository<Basket> _basketRepository;
         
         public readonly ILogger<AccountService> logger;
 
-        public AccountService(IRepository<User> userRepository, IRepository<RegUser> regUserRepository, IRepository<Basket> basketRepository, ILogger<AccountService> logger)
+        public AccountService(IRepository<User> userRepository,
+                            IRegUserRepository regUserRepository,
+                            IRepository<Basket> basketRepository,
+                            ILogger<AccountService> logger)
         {
             _userRepository = userRepository;
             _regUserRepository = regUserRepository;
             _basketRepository = basketRepository;
             this.logger = logger;
         }
-        public async Task<User> CreateAccount(Account newAccount)
+        public async Task<User?> CreateAccount(Account newAccount)
         {
-            var user = await _regUserRepository.GetAsync(user=>user.Login == newAccount.RegUser.Login);
+            var user = await _regUserRepository.GetOneByLoginAsync(newAccount.RegUser.Login);
 
-            if (user.FirstOrDefault<RegUser>() != null)
+            if (user != null)
             {
-                logger.LogError("User is alread exists: id-" + user.FirstOrDefault<RegUser>().Id);
+                logger.LogError("User is alread exists: id-" + user.Id);
                 return null;
             }
 
-            string id = (_regUserRepository as MongoDBRepository<RegUser>).GenerateID();
+            string id = ObjectId.GenerateNewId().ToString();
             RegUser newRegUser = new RegUser()
             {
                 Id = id,
@@ -50,7 +54,7 @@ namespace OnlineStore.BLL.AccountService
             };
             Basket basket = new Basket()
             {
-                Id = (_regUserRepository as MongoDBRepository<RegUser>).GenerateID(),
+                Id = ObjectId.GenerateNewId().ToString(),
                 IdUser = id,
                 Products = new List<Product>(),
                 TotalSum = 0
@@ -65,8 +69,8 @@ namespace OnlineStore.BLL.AccountService
         public async Task<bool> UpdateAccount(Account account)
         {
             string id = account.RegUser.Id;
-            var regUser = await _regUserRepository.GetAsync(id);
-            var user = await _userRepository.GetAsync(id);
+            RegUser? regUser = await _regUserRepository.GetOneByIdAsync(id);
+            User? user = await _userRepository.GetOneByIdAsync(id);
 
             if (user == null || regUser == null)
             {
@@ -77,19 +81,13 @@ namespace OnlineStore.BLL.AccountService
             await _regUserRepository.UpdateAsync(account.RegUser);
             await _userRepository.UpdateAsync(account.User);
 
-            account = new Account()
-            {
-                 RegUser = await _regUserRepository.GetAsync(id),
-                 User =  await _userRepository.GetAsync(id),
-            };
-
             return true;
         }
 
         public async Task<bool> DeleteUser (string id)
         {
-            var regUser = await _regUserRepository.GetAsync(id);
-            var user = await _userRepository.GetAsync(id);
+            var regUser = await _regUserRepository.GetOneByIdAsync(id);
+            var user = await _userRepository.GetOneByIdAsync(id);
 
             if (user == null || regUser == null)
             {
@@ -105,11 +103,11 @@ namespace OnlineStore.BLL.AccountService
 
         public async Task<User?> LogIn(RegUser logInRegUser)
         {
-            RegUser foundRegUser = (await _regUserRepository.GetAsync(regUser => regUser.Login == logInRegUser.Login && regUser.Password == logInRegUser.Password)).FirstOrDefault();
+            RegUser? foundRegUser = await _regUserRepository.GetOneByLoginAndPasswordAsync(logInRegUser.Login, logInRegUser.Password);
 
             if (foundRegUser == null) return null;
 
-            User foundUser = await _userRepository.GetAsync(foundRegUser.Id);
+            User? foundUser = await _userRepository.GetOneByIdAsync(foundRegUser.Id);
 
             if (foundUser != null) return foundUser;
 
@@ -120,8 +118,8 @@ namespace OnlineStore.BLL.AccountService
         public async Task<Account?> GetUser(string id) =>
             new Account()
             {
-                User = await _userRepository.GetAsync(id),
-                RegUser = await _regUserRepository.GetAsync(id)
+                User = await _userRepository.GetOneByIdAsync(id),
+                RegUser = await _regUserRepository.GetOneByIdAsync(id)
             };
 
 
