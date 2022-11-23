@@ -1,33 +1,10 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using OnlineStore.BLL.AccountService;
 using OnlineStore.DAL;
-using OnlineStore.DAL.Implementation;
-using OnlineStore.DAL.Interfaces;
-using OnlineStore.Domain.Models;
-using OnlineStore.Options;
+using OnlineStore.DI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidIssuer = JwtOptions.ISSUER,
-        ValidateAudience = true,
-        ValidAudience = JwtOptions.AUDIENCE,
-        ValidateLifetime = true,
-        IssuerSigningKey = JwtOptions.GetSymmetricSecurityKey(),
-        ValidateIssuerSigningKey = true,
-    };
-});
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("OnlineStoreDatabase"));
-builder.Services.AddSingleton<IUserRepository,UserRepository>();
-builder.Services.AddSingleton<IRegUserRepository, RegUserRepository>();
-builder.Services.AddSingleton<IBasketRepository, BasketRepository>();
-builder.Services.AddSingleton<AccountService>();
+DependencyContainer.RegisterDependency(builder.Services);
 builder.Services.AddControllers();
 
 var app = builder.Build();
