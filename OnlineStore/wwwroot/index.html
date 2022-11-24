@@ -42,6 +42,7 @@
     </div>
     <script>       
         async function CreateOrder() {
+            const prod = [];
             const dateNow = new Date();
             const IdUser = document.getElementById("orderUserId").value;
             const response = await fetch("clients/" + IdUser + "/basket", {
@@ -59,27 +60,46 @@
                 BasketTotalSum.append('Order price: ' + getBasket[0].totalSum);
                 BasketTotalSum.value = getBasket[0].totalSum;
                 BasketTotalSum.id = "orderSum";
-                alert(BasketTotalSum.innerText);
+
+                //alert(BasketTotalSum.innerText);
                 divBasket.append(BasketTotalSum)
-                console.log(products);
                 const BasketProducts = document.createElement('h1');
-                BasketProducts.append('Products: ' + getBasket[0].products[0].name);
+                
+                getBasket[0].products.forEach(async (element) => {
+                    const prodCont = document.createElement('h1');
+                    console.log(element.subcategory)
+                    prodCont.append('Product name: ' + element.name +
+                        ' Count: ' + element.count +
+                        ' Price: ' + element.price +
+                        ' Subcategory: ' + element.subcategory.name);
+                    divBasket.append(prodCont);
+                    console.log(element);
+                    prod.push(element);
+                });
                 BasketProducts.value = getBasket[0].products;
                 BasketProducts.id = "orderProds";
                 divBasket.append(BasketProducts);
+
                 
             }
             else  // если произошла ошибка, получаем код статуса
                 console.log("Status: ", response.status);
             
+            var mongoObjectId = function () {
+                var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+                return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function () {
+                    return (Math.random() * 16 | 0).toString(16);
+                }).toLowerCase();
+            };
             
             const response2 = await fetch("clients/" + IdUser + "/basket", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                    Id: mongoObjectId(),
                     Date: dateNow,
                     TotalSum: document.getElementById("orderSum").value,
-                    Products: document.getElementById("orderProds").value,
+                    Products: prod,
                     IdUser: IdUser
                 })
             });
@@ -88,6 +108,7 @@
             }
             else  // если произошла ошибка, получаем код статуса
                 console.log("Status: ", response2.status);
+                
                 
         }
     </script>

@@ -1,19 +1,20 @@
 ﻿using OnlineStore.Domain.Models;
-using OnlineStore.DAL;
+using OnlineStore.DAL.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using System.Security.Principal;
+using MongoDB.Bson;
 
 namespace OnlineStore.BLL.OrderServices
 {
     public class OrderService
     {
-        private readonly IRepository<Order> _orderrepository;
-        private readonly IRepository<Basket> _basketrepository;
+        private readonly IOrderRepository _orderrepository;
+        private readonly IBasketRepository _basketrepository;
         private readonly ILogger<OrderService> _logger;
 
-        public OrderService(IRepository<Order> repository, IRepository<Basket> basketrepository, ILogger<OrderService> logger)
+        public OrderService(IOrderRepository repository, IBasketRepository basketrepository, ILogger<OrderService> logger)
         {
             _orderrepository = repository;
             _basketrepository = basketrepository;
@@ -33,7 +34,7 @@ namespace OnlineStore.BLL.OrderServices
         public async Task<Order> CreateOrder(Basket newBasket)
         {
             DateTime timeNow = DateTime.UtcNow;
-            string id = (_orderrepository as MongoDBRepository<Order>).GenerateID();
+            string id = ObjectId.GenerateNewId().ToString();
             Order newOrder = new Order()
             {
                 Id = id,
