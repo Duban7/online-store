@@ -1,7 +1,5 @@
 ﻿using FluentValidation;
 using OnlineStore.BLL.AccountService.Model;
-using OnlineStore.Domain.Models;
-using System.Text.RegularExpressions;
 
 namespace OnlineStore.Validators
 {

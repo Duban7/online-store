@@ -39,6 +39,11 @@ namespace OnlineStore.DI
             service.AddScoped<IValidator<Account>, AccountValidator>();
 
             service.AddTransient<AccountService>();
+
+            service.AddControllers();
+
+            service.AddEndpointsApiExplorer();
+            service.AddSwaggerGen();
         }
     }
 }
