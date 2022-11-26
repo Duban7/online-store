@@ -56,7 +56,7 @@ namespace OnlineStore.Controllers
         [Route("clients/authorisation")]
         public async Task<ActionResult<object>> LogIn([FromBody] RegUser regUser)
         {
-            User foundUser = await _accountService.LogIn(regUser);
+            User? foundUser = await _accountService.LogIn(regUser);
 
             if (foundUser == null) return Unauthorized();
 
@@ -83,7 +83,7 @@ namespace OnlineStore.Controllers
         [Route("clients/update")]
         [Authorize]
         public async Task<ActionResult> UpdateAccount([FromBody] Account account) =>
-            await _accountService.UpdateAccount(account) == null ? BadRequest() : NoContent();
+            await _accountService.UpdateAccount(account) == false ? BadRequest() : NoContent();
         
 
         [HttpDelete]
