@@ -46,6 +46,21 @@ namespace OnlineStore.BLL.OrderServices
             await _orderrepository.CreateAsync(newOrder);
             return newOrder;
         }
-        
+        public async Task<bool> DeleteBasketProd(Basket basket, string ProdId)
+        {
+            List<Product> ProdList = new List<Product>(basket.Products);
+            for(int i = 0; i < ProdList.Count; i++)
+            {
+                if (ProdList[i].Id == ProdId)
+                {
+                    ProdList.RemoveAt(i);
+                }
+            }
+            basket.Products = ProdList;
+            await _basketrepository.UpdateAsync(basket);
+            return true;
+            
+        }
+
     }
 }

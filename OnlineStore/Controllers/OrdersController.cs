@@ -45,7 +45,15 @@ namespace OnlineStore.Controllers
 
             return order == null ? BadRequest() : Ok(order);
         }
-        
-        
+
+        [HttpPut]
+        [Route("clients/{IdUser}/basket")]
+        public async Task<ActionResult<Basket>> DeleteProd([FromBody] Basket basket, string ProdId)
+        {
+            await _orderService.DeleteBasketProd(basket, ProdId);
+
+            return basket == null ? BadRequest() : Ok(basket);
+        }
+
     }
 }
