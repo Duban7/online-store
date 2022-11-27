@@ -36,6 +36,8 @@ namespace OnlineStore.DAL.Implementation
 
         public async Task RemoveAsync(string id) =>
             await _orderCollection.DeleteOneAsync(x => x.Id == id);
+        public async Task<Order?> GetOneByIdAsync(string id) =>
+            await _orderCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
     }
     
 }

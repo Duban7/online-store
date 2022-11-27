@@ -36,5 +36,7 @@ namespace OnlineStore.DAL.Implementation
 
         public async Task RemoveAsync(string id) =>
             await _basketCollection.DeleteOneAsync(x => x.Id == id);
+        public async Task<Basket?> GetOneByIdAsync(string id) =>
+            await _basketCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
     }
 }

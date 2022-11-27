@@ -48,11 +48,12 @@ namespace OnlineStore.Controllers
 
         [HttpPut]
         [Route("clients/{IdUser}/basket")]
-        public async Task<ActionResult<Basket>> DeleteProd([FromBody] Basket basket, string ProdId)
+        public async Task<ActionResult<Basket>> DeleteProd([FromBody] string ProdId)
         {
-            await _orderService.DeleteBasketProd(basket, ProdId);
+            string IdUser = RouteData.Values["IdUser"].ToString();
+            await _orderService.DeleteBasketProd(IdUser ,ProdId);
 
-            return basket == null ? BadRequest() : Ok(basket);
+            return ProdId == null ? BadRequest() : Ok(ProdId);
         }
 
     }

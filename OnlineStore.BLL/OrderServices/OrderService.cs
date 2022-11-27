@@ -26,6 +26,7 @@ namespace OnlineStore.BLL.OrderServices
             return await _orderrepository.GetAsync(predicante);
         }
 
+
         public async Task<List<Basket>> GetBasket(Expression<Func<Basket, bool>> predicante)
         {
             return await _basketrepository.GetAsync(predicante);
@@ -46,8 +47,10 @@ namespace OnlineStore.BLL.OrderServices
             await _orderrepository.CreateAsync(newOrder);
             return newOrder;
         }
-        public async Task<bool> DeleteBasketProd(Basket basket, string ProdId)
+
+        public async Task<bool> DeleteBasketProd(string IdUser, string ProdId)
         {
+            Basket basket = await _basketrepository.GetOneByIdAsync(IdUser);
             List<Product> ProdList = new List<Product>(basket.Products);
             for(int i = 0; i < ProdList.Count; i++)
             {

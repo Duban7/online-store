@@ -8,5 +8,6 @@ namespace OnlineStore.DAL.Interfaces
         public Task CreateAsync(T newModel);
         public Task UpdateAsync(T updatedBasket);
         public Task RemoveAsync(string id);
+        public Task<T?> GetOneByIdAsync(string id);
     }
 }
