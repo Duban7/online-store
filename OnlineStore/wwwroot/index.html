@@ -2,36 +2,11 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
-    <style>
-        .products {
-            display: flex;
-            align-items: flex-start;
-        }
+    <title>OnlineStore</title>
 
-        .Prod {
-            border: solid;
-            border-width: 2px;
-            border-color: black;
-            border-radius: 10px;
-            width: fit-content;
-            height: fit-content;
-            margin: 10px;
-        }
-
-        .prodImg {
-            width: 200px;
-            ;
-            height: 200px;
-            margin: 1px;
-            border: solid;
-            border-radius: 10px;
-        }
-    </style>
-    
 </head>
 <body>
-    
+
     <div id="userId">
         <p>Введите id пользователя</p>
         <input type="text" id="orderUserId" />
@@ -40,7 +15,35 @@
     <div>
         <input type="button" id="sendOrder" value="Создать заказ" onclick="CreateOrder();" />
     </div>
-    <script>       
+    <div>
+        <p>Введите id продукта</p>
+        <input type="text" id="inputProdID" />
+    </div>
+    <div>
+        <input type="button" id="sendProdId" value="Отправить ID продукта" onclick="DeleteProduct();" />
+    </div>
+    <script>
+
+        async function DeleteProduct() {
+            const ProdId = [];
+            ProdId.push(document.getElementById("inputProdID").value);
+            const IdUser = document.getElementById("orderUserId").value;
+            const response = await fetch("clients/" + IdUser + "/basket", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json"},
+                body: JSON.stringify({
+                    ProdId: ProdId
+                })
+
+            });
+        
+            if (response.ok === true) {
+                alert("Query successful!")
+            }
+            else  // если произошла ошибка, получаем код статуса
+                console.log("Status: ", response.status);
+        }
+
         async function CreateOrder() {
             const prod = [];
             const dateNow = new Date();
@@ -50,10 +53,11 @@
                 headers: { "Accept": "application/json" },
             });
             if (response.ok === true) {
-                
+
                 const getBasket = await response.json();
                 const divBasket = document.getElementsByClassName('myBasket')[0];
                 console.log(getBasket);
+
 
                 //IdUser = getBasket[0].idUser;
                 const BasketTotalSum = document.createElement('h1');
@@ -64,7 +68,7 @@
                 //alert(BasketTotalSum.innerText);
                 divBasket.append(BasketTotalSum)
                 const BasketProducts = document.createElement('h1');
-                
+
                 getBasket[0].products.forEach(async (element) => {
                     const prodCont = document.createElement('h1');
                     console.log(element.subcategory)
@@ -80,18 +84,18 @@
                 BasketProducts.id = "orderProds";
                 divBasket.append(BasketProducts);
 
-                
+
             }
             else  // если произошла ошибка, получаем код статуса
                 console.log("Status: ", response.status);
-            
+
             var mongoObjectId = function () {
                 var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
                 return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function () {
                     return (Math.random() * 16 | 0).toString(16);
                 }).toLowerCase();
             };
-            
+
             const response2 = await fetch("clients/" + IdUser + "/basket", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -101,15 +105,15 @@
                     TotalSum: document.getElementById("orderSum").value,
                     Products: prod,
                     IdUser: IdUser
-                }) 
+                })
             });
             if (response2.ok === true) {
                 alert("Order created! :)");
             }
             else  // если произошла ошибка, получаем код статуса
                 console.log("Status: ", response2.status);
-                
-                
+
+
         }
     </script>
 </body>

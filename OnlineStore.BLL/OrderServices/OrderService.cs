@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using System.Security.Principal;
 using MongoDB.Bson;
+using MongoDB.Driver.Linq;
 
 namespace OnlineStore.BLL.OrderServices
 {
@@ -34,6 +35,11 @@ namespace OnlineStore.BLL.OrderServices
 
         public async Task<Order> CreateOrder(Basket newBasket)
         {
+            if (newBasket == null)
+            {
+                _logger.LogError("Basket doesn't exist");
+                return null;
+            }
             DateTime timeNow = DateTime.UtcNow;
             string id = ObjectId.GenerateNewId().ToString();
             Order newOrder = new Order()
@@ -48,19 +54,32 @@ namespace OnlineStore.BLL.OrderServices
             return newOrder;
         }
 
-        public async Task<bool> DeleteBasketProd(string IdUser, string ProdId)
+        public async Task<bool> DeleteBasketProd(List<Basket> basket, string ProdId)
         {
-            Basket basket = await _basketrepository.GetOneByIdAsync(IdUser);
-            List<Product> ProdList = new List<Product>(basket.Products);
-            for(int i = 0; i < ProdList.Count; i++)
+            Basket getBasket = null;
+            if(basket != null)
             {
-                if (ProdList[i].Id == ProdId)
-                {
-                    ProdList.RemoveAt(i);
-                }
+                getBasket = basket[0];
+                
             }
-            basket.Products = ProdList;
-            await _basketrepository.UpdateAsync(basket);
+            else
+            {
+                _logger.LogError("User doesn't exist");
+                return false;
+            }
+            List<Product> ProdList = new List<Product>(getBasket.Products);
+            
+            foreach(Product prod in ProdList)
+            {
+                if(prod.Id == ProdId)
+                {
+                    ProdList.Remove(prod);
+                }
+
+            }
+
+            getBasket.Products = ProdList;
+            await _basketrepository.UpdateAsync(getBasket);
             return true;
             
         }
