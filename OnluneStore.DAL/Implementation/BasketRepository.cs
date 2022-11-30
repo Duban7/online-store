@@ -14,6 +14,7 @@ namespace OnlineStore.DAL.Implementation
 
         public BasketRepository(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
         {
+            
             MongoClient mongoClient = new MongoClient(OnlineStoreDataBaseSettings.Value.ConnectionString);
 
             IMongoDatabase mongoDataBase = mongoClient.GetDatabase(OnlineStoreDataBaseSettings.Value.DatabaseName);

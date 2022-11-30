@@ -12,17 +12,9 @@ namespace OnlineStore.DAL.Implementation
     {
         private readonly IMongoCollection<User> _userCollection;
 
-        public UserRepository(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
+        public UserRepository(IMongoCollection<User> userCollection)
         {
-            MongoClient mongoClient = new MongoClient(OnlineStoreDataBaseSettings.Value.ConnectionString);
-
-            IMongoDatabase mongoDataBase = mongoClient.GetDatabase(OnlineStoreDataBaseSettings.Value.DatabaseName);
-
-            _userCollection = mongoDataBase.GetCollection<User>(GetCollectionName(typeof(User)));
-        }
-        private protected string GetCollectionName(Type documentType)
-        {
-            return ((BsonCollectionAttribute)documentType.GetCustomAttributes(typeof(BsonCollectionAttribute), true).FirstOrDefault())?.CollectionName;
+            _userCollection = userCollection;
         }
 
         public async Task<User?> GetOneByIdAsync(string id) =>
