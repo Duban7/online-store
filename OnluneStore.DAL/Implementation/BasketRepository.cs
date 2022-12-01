@@ -14,17 +14,9 @@ namespace OnlineStore.DAL.Implementation
     {
         private readonly IMongoCollection<Basket> _basketCollection;
 
-        public BasketRepository(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
+        public BasketRepository(IMongoCollection<Basket> basketCollection)
         {
-            MongoClient mongoClient = new MongoClient(OnlineStoreDataBaseSettings.Value.ConnectionString);
-
-            IMongoDatabase mongoDataBase = mongoClient.GetDatabase(OnlineStoreDataBaseSettings.Value.DatabaseName);
-
-            _basketCollection = mongoDataBase.GetCollection<Basket>(GetCollectionName(typeof(Basket)));
-        }
-        private protected string GetCollectionName(Type documentType)
-        {
-            return ((BsonCollectionAttribute)documentType.GetCustomAttributes(typeof(BsonCollectionAttribute), true).FirstOrDefault())?.CollectionName;
+            _basketCollection = basketCollection;
         }
         public async Task<List<Basket>?> GetAsync(Expression<Func<Basket, bool>> predicant) =>
             await _basketCollection.Find(predicant).ToListAsync<Basket>();

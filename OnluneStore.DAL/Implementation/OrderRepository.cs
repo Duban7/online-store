@@ -14,17 +14,9 @@ namespace OnlineStore.DAL.Implementation
     {
         private readonly IMongoCollection<Order> _orderCollection;
 
-        public OrderRepository(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
+        public OrderRepository(IMongoCollection<Order> orderCollection)
         {
-            MongoClient mongoClient = new MongoClient(OnlineStoreDataBaseSettings.Value.ConnectionString);
-
-            IMongoDatabase mongoDataBase = mongoClient.GetDatabase(OnlineStoreDataBaseSettings.Value.DatabaseName);
-
-            _orderCollection = mongoDataBase.GetCollection<Order>(GetCollectionName(typeof(Order)));
-        }
-        private protected string GetCollectionName(Type documentType)
-        {
-            return ((BsonCollectionAttribute)documentType.GetCustomAttributes(typeof(BsonCollectionAttribute), true).FirstOrDefault())?.CollectionName;
+            _orderCollection = orderCollection;
         }
 
         public async Task<List<Order>?> GetAsync(Expression<Func<Order, bool>> predicant) =>

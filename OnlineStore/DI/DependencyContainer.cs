@@ -4,6 +4,9 @@ using OnlineStore.BLL.OrderServices;
 using OnlineStore.DAL.Implementation;
 using OnlineStore.DAL.Interfaces;
 using OnlineStore.Options;
+using MongoDB.Driver;
+using OnlineStore.DAL;
+using OnlineStore.Domain.Models;
 
 namespace OnlineStore.DI
 {
@@ -25,6 +28,26 @@ namespace OnlineStore.DI
                     IssuerSigningKey = JwtOptions.GetSymmetricSecurityKey(),
                     ValidateIssuerSigningKey = true,
                 };
+            });
+
+            service.AddTransient<IMongoClient, MongoClient>((serviceProvider) =>
+            {
+                DatabaseSettings dbSettings = serviceProvider.GetService<DatabaseSettings>();
+                return new MongoClient(dbSettings.ConnectionString);
+            });
+
+            service.AddTransient<IMongoDatabase>((serviceProvider) =>
+            {
+                DatabaseSettings dbSettings = serviceProvider.GetService<DatabaseSettings>();
+                IMongoClient mongoClient = serviceProvider.GetService<IMongoClient>();
+                return mongoClient.GetDatabase(dbSettings.DatabaseName);
+            });
+
+            service.AddTransient<IMongoCollection<User>>((serviceProvider) =>
+            {
+                IMongoDatabase mongoDatabase = serviceProvider.GetService<IMongoDatabase>();
+                return mongoDatabase.GetCollection<User>("User");
+
             });
 
             service.AddTransient<IBasketRepository, BasketRepository>();
