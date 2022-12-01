@@ -10,6 +10,7 @@ using OnlineStore.DAL.Interfaces;
 using OnlineStore.Domain.Models;
 using OnlineStore.Options;
 using OnlineStore.Validators;
+using Microsoft.Extensions.Options;
 
 namespace OnlineStore.DI
 {
@@ -35,13 +36,13 @@ namespace OnlineStore.DI
 
             service.AddTransient<IMongoClient, MongoClient>((serviceProvider) =>
             {
-                DatabaseSettings dbSettings = serviceProvider.GetService<DatabaseSettings>();
+                DatabaseSettings dbSettings = serviceProvider.GetService<IOptions<DatabaseSettings>>().Value;
                 return new MongoClient(dbSettings.ConnectionString);
             });
 
             service.AddTransient<IMongoDatabase>((serviceProvider) =>
             {
-                DatabaseSettings dbSettings = serviceProvider.GetService<DatabaseSettings>();
+                DatabaseSettings dbSettings = serviceProvider.GetService<IOptions<DatabaseSettings>>().Value;
                 IMongoClient mongoClient = serviceProvider.GetService<IMongoClient>();
                 return mongoClient.GetDatabase(dbSettings.DatabaseName);
             });
