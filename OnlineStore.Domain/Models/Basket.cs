@@ -3,7 +3,7 @@
 namespace OnlineStore.Domain.Models
 {
     [BsonCollectionAttribute("Basket")]
-    public class Basket : Model
+    public class Basket 
     {
         public string IdUser { get; set; }
         public List<Product> Products { get; set; }
