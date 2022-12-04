@@ -7,6 +7,7 @@ using OnlineStore.Options;
 using MongoDB.Driver;
 using OnlineStore.DAL;
 using OnlineStore.Domain.Models;
+using Microsoft.Extensions.Options;
 
 namespace OnlineStore.DI
 {
@@ -29,32 +30,40 @@ namespace OnlineStore.DI
                     ValidateIssuerSigningKey = true,
                 };
             });
-
-            service.AddTransient<IMongoClient, MongoClient>((serviceProvider) =>
+            service.AddSingleton<IMongoClient, MongoClient>((serviceProvider) =>
             {
-                DatabaseSettings dbSettings = serviceProvider.GetService<DatabaseSettings>();
+                DatabaseSettings dbSettings = serviceProvider.GetService<IOptions<DatabaseSettings>>().Value;
                 return new MongoClient(dbSettings.ConnectionString);
             });
 
-            service.AddTransient<IMongoDatabase>((serviceProvider) =>
+            service.AddScoped<IMongoDatabase>((serviceProvider) =>
             {
-                DatabaseSettings dbSettings = serviceProvider.GetService<DatabaseSettings>();
+                DatabaseSettings dbSettings = serviceProvider.GetService<IOptions<DatabaseSettings>>().Value;
                 IMongoClient mongoClient = serviceProvider.GetService<IMongoClient>();
                 return mongoClient.GetDatabase(dbSettings.DatabaseName);
             });
 
-            service.AddTransient<IMongoCollection<User>>((serviceProvider) =>
+            service.AddScoped<IMongoCollection<Order>>((serviceProvider) =>
             {
                 IMongoDatabase mongoDatabase = serviceProvider.GetService<IMongoDatabase>();
-                return mongoDatabase.GetCollection<User>("User");
+                return mongoDatabase.GetCollection<Order>("Order");
+            });
 
+            service.AddScoped<IMongoCollection<Basket>>((serviceProvider) =>
+            {
+                IMongoDatabase mongoDatabase = serviceProvider.GetService<IMongoDatabase>();
+                return mongoDatabase.GetCollection<Basket>("Basket");
             });
 
             service.AddTransient<IBasketRepository, BasketRepository>();
 
             service.AddTransient<IOrderRepository, OrderRepository>();
-
+            
             service.AddTransient<OrderService>();
+            service.AddControllers();
+
+            service.AddEndpointsApiExplorer();
+            service.AddSwaggerGen();
         }
     }
 }
