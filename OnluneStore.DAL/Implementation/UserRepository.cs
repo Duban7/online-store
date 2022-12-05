@@ -1,9 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using OnlineStore.DAL.Interfaces;
-using OnlineStore.Domain.CustomAttribute;
 using OnlineStore.Domain.Models;
 
 namespace OnlineStore.DAL.Implementation
@@ -28,5 +25,8 @@ namespace OnlineStore.DAL.Implementation
 
         public async Task RemoveAsync(string id) =>
             await _userCollection.DeleteOneAsync(x => x.Id == id);
+
+        public string GenerateObjectID()=>
+            ObjectId.GenerateNewId().ToString();
     }
 }

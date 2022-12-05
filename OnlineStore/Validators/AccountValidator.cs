@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using OnlineStore.BLL.AccountService.Model;
+using System.Text.RegularExpressions;
 
 namespace OnlineStore.Validators
 {
@@ -28,45 +29,13 @@ namespace OnlineStore.Validators
                 .Must(IsPasswordValid).WithMessage(msg);
         }
 
-        public bool IsPhoneValid(string phone)
-        {
-            int phoneLength = -1;
-            if (phone.StartsWith("375")) phoneLength = 12;
-            if (phone.StartsWith("7")) phoneLength = 10;
+        public bool IsPhoneValid(string phone)=>
+            Regex.IsMatch(phone, @"(?=.{10,12}$)(375[0-9]{9}$)|(7[0-9]{9}$)");
 
-            if (phone.Length != phoneLength) return false;
+        public bool IsLoginValid(string login)=>
+             Regex.IsMatch(login, @"[0-9a-zA-Z_\-]{8,20}");
 
-            foreach (char c in phone)
-                if (!Char.IsDigit(c)) return false;
-
-            return true;
-        }
-
-        public bool IsLoginValid(string login)
-        {
-            char[] validSymbols = { '-', '_' };
-
-            foreach (Char c in login)
-                if (!(Char.IsLetter(c) || Char.IsDigit(c) || validSymbols.Contains(c))) return false;
-
-            return true;
-        }
-
-        public bool IsPasswordValid(string password)
-        {
-            bool hasUpperCaseLetter = false, hasLowerCaseLetter = false, hasDigit = false;
-
-            char[] validSymbols = { '-', '_' };
-
-            foreach (Char c in password)
-            {
-                if (!(Char.IsLetter(c) || Char.IsDigit(c) || validSymbols.Contains(c))) return false;
-                if (Char.IsUpper(c)) hasUpperCaseLetter = true;
-                if (Char.IsLower(c)) hasLowerCaseLetter = true;
-                if (Char.IsDigit(c)) hasDigit = true;
-            }
-
-            return hasUpperCaseLetter && hasLowerCaseLetter && hasDigit;
-        }
+        public bool IsPasswordValid(string password)=>
+             Regex.IsMatch(password, @"(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])[0-9a-zA-Z_\-]{8,20}");
     }
 }

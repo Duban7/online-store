@@ -6,5 +6,6 @@ namespace OnlineStore.DAL.Interfaces
     {
         public Task<RegUser?> GetOneByLoginAsync(string login);
         public  Task<RegUser?> GetOneByLoginAndPasswordAsync(string login, string password);
+        public string GenerateObjectID();
     }
 }

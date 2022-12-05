@@ -1,9 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using OnlineStore.DAL.Interfaces;
-using OnlineStore.Domain.CustomAttribute;
 using OnlineStore.Domain.Models;
 
 namespace OnlineStore.DAL.Implementation
@@ -12,17 +9,9 @@ namespace OnlineStore.DAL.Implementation
     {
         private readonly IMongoCollection<RegUser> _regUserCollection;
 
-        public RegUserRepository(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
+        public RegUserRepository(IMongoCollection<RegUser> regUserCollection)
         {
-            MongoClient mongoClient = new MongoClient(OnlineStoreDataBaseSettings.Value.ConnectionString);
-
-            IMongoDatabase mongoDataBase = mongoClient.GetDatabase(OnlineStoreDataBaseSettings.Value.DatabaseName);
-
-            _regUserCollection = mongoDataBase.GetCollection<RegUser>(GetCollectionName(typeof(RegUser)));
-        }
-        private protected string GetCollectionName(Type documentType)
-        {
-            return ((BsonCollectionAttribute)documentType.GetCustomAttributes(typeof(BsonCollectionAttribute), true).FirstOrDefault())?.CollectionName;
+            _regUserCollection = regUserCollection;
         }
 
         public async Task<RegUser?> GetOneByLoginAsync(string login) =>
@@ -42,5 +31,7 @@ namespace OnlineStore.DAL.Implementation
 
         public async Task RemoveAsync(string id) =>
             await _regUserCollection.DeleteOneAsync(regUser => regUser.Id == id);
+        public string GenerateObjectID() =>
+            ObjectId.GenerateNewId().ToString();
     }
 }
