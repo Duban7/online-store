@@ -42,8 +42,6 @@ namespace OnlineStore.Controllers
 
             User? newUser = await _accountService.CreateAccount(newAccount);
 
-           // if (newUser == null) return BadRequest();
-
             var response = new
             {
                 access_token = _accountService.GenerateJwtToken(newUser),
@@ -58,8 +56,6 @@ namespace OnlineStore.Controllers
         public async Task<ActionResult<object>> LogIn([FromBody] RegUser regUser)
         {
             User? foundUser = await _accountService.LogIn(regUser);
-
-           // if (foundUser == null) return Unauthorized();
 
             var response = new
             {

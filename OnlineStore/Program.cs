@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
-using OnlineStore.DAL;
 using OnlineStore.DI;
-using OnlineStore.Options;
+using System.Net.Mime;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +12,15 @@ app.UseExceptionHandler(exceptionHandlerApp =>
 {
     exceptionHandlerApp.Run(async( context) =>
     {
-        context.Response.StatusCode = StatusCodes.Status502BadGateway;
-        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        context.Response.ContentType = MediaTypeNames.Text.Plain;
         IExceptionHandlerFeature? exceptionhandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-        context.RequestServices.GetService<ILogger<Program>>().LogError(exceptionhandlerPathFeature.Error.Message);
-        await context.Response.WriteAsJsonAsync(exceptionhandlerPathFeature.Error.Message);
+
+        context.RequestServices.GetService<ILogger<Program>>()
+            .LogError(exceptionhandlerPathFeature.Error.Message);
+
+        await context.Response.WriteAsync(exceptionhandlerPathFeature.Error.Message);
+
     });
 });
 

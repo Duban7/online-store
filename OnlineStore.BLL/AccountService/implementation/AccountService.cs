@@ -106,18 +106,22 @@ namespace OnlineStore.BLL.AccountService.implementation
         public async Task<User> LogIn(RegUser logInRegUser)
         {
             RegUser? foundRegUser = await _regUserRepository.GetOneByLoginAndPasswordAsync(logInRegUser.Login, logInRegUser.Password);
-
+           
             if (foundRegUser == null)
             {
                 _logger.LogError("User doesn't exist");
                 throw new Exception("User doesn't exist");
             }
+
             User? foundUser = await _userRepository.GetOneByIdAsync(foundRegUser.Id);
 
-            if (foundUser != null) throw new Exception("User doesn't exist");
+            if (foundUser == null)
+            {
+                _logger.LogError("RegUser doesn't match User");
+                throw new Exception("User doesn't exist");
+            }
 
-            _logger.LogError("RegUser doesn't match User");
-            return null;
+            return foundUser;
         }
 
         public async Task<Account> GetUser(string id) =>
