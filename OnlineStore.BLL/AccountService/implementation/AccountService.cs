@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
+using OnlineStore.BLL.AccountService.Exceptions;
 using OnlineStore.BLL.AccountService.Model;
 using OnlineStore.DAL.Interfaces;
 using OnlineStore.Domain.Models;
@@ -37,11 +38,7 @@ namespace OnlineStore.BLL.AccountService.implementation
         {
             var user = await _regUserRepository.GetOneByLoginAsync(newAccount.RegUser.Login);
 
-            if (user != null)
-            {
-                _logger.LogError("User is alread exists: id-" + user.Id);
-                throw new Exception("User is alread exists: id-" + user.Id);
-            }
+            if (user != null) throw new UserFoundException("User is alread exists");
 
             string id = _regUserRepository.GenerateObjectID();
             RegUser newRegUser = new RegUser()
@@ -64,6 +61,7 @@ namespace OnlineStore.BLL.AccountService.implementation
                 Products = new List<Product>(),
                 TotalSum = 0
             };
+
             await _regUserRepository.CreateAsync(newRegUser);
             await _userRepository.CreateAsync(newUser);
             await _basketRepository.CreateAsync(basket);
@@ -71,17 +69,12 @@ namespace OnlineStore.BLL.AccountService.implementation
             return newUser;
         }
 
-        public async Task UpdateAccount(Account account)
+        public async Task UpdateAccount(Account account, string id)
         {
-            string id = account.RegUser.Id;
             RegUser? regUser = await _regUserRepository.GetOneByIdAsync(id);
             User? user = await _userRepository.GetOneByIdAsync(id);
 
-            if (user == null || regUser == null)
-            {
-                _logger.LogError("User doesn't exist");
-                throw new Exception("User doesn't exist");
-            }
+            if (user == null || regUser == null) throw new UserNotFoundException("User doesn't exist");
 
             await _regUserRepository.UpdateAsync(account.RegUser);
             await _userRepository.UpdateAsync(account.User);
@@ -92,11 +85,8 @@ namespace OnlineStore.BLL.AccountService.implementation
             var regUser = await _regUserRepository.GetOneByIdAsync(id);
             var user = await _userRepository.GetOneByIdAsync(id);
 
-            if (user == null || regUser == null)
-            {
-                _logger.LogError("User doesn't exist");
-                throw new Exception("User doesn't exist");
-            }
+            if (user == null || regUser == null) throw new UserNotFoundException("User doesn't exist");
+
 
             await _regUserRepository.RemoveAsync(id);
             await _userRepository.RemoveAsync(id);
@@ -107,19 +97,11 @@ namespace OnlineStore.BLL.AccountService.implementation
         {
             RegUser? foundRegUser = await _regUserRepository.GetOneByLoginAndPasswordAsync(logInRegUser.Login, logInRegUser.Password);
            
-            if (foundRegUser == null)
-            {
-                _logger.LogError("User doesn't exist");
-                throw new Exception("User doesn't exist");
-            }
+            if (foundRegUser == null) throw new UserNotFoundException("User doesn't exist");
 
             User? foundUser = await _userRepository.GetOneByIdAsync(foundRegUser.Id);
 
-            if (foundUser == null)
-            {
-                _logger.LogError("RegUser doesn't match User");
-                throw new Exception("User doesn't exist");
-            }
+            if (foundUser == null) throw new Exception("User doesn't match RegUser");
 
             return foundUser;
         }

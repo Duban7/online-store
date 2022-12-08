@@ -9,6 +9,7 @@ namespace OnlineStore.Validators
         public AccountValidator()
         {
             string msg = "Ошибка в поле {PropertyName}: значение {PropertyValue}";
+            string lengthMsg = "Неверный размер поля {PropertyName}";
 
             RuleFor(acc => acc.User.Name)
                 .NotEmpty().WithMessage(msg);
@@ -17,15 +18,15 @@ namespace OnlineStore.Validators
                 .EmailAddress().WithMessage(msg);
 
             RuleFor(acc => acc.User.Phone)
-                .Length(12).WithMessage(msg)
+                .Length(12).WithMessage(lengthMsg)
                 .Must(IsPhoneValid).WithMessage(msg);
 
             RuleFor(acc=>acc.RegUser.Login)
-                .Length(8,30).WithMessage(msg)
+                .Length(8,30).WithMessage(lengthMsg)
                 .Must(IsLoginValid).WithMessage(msg);
 
             RuleFor(acc=>acc.RegUser.Password)
-                .Length(8,30).WithMessage(msg)
+                .Length(8,30).WithMessage(lengthMsg)
                 .Must(IsPasswordValid).WithMessage(msg);
         }
 

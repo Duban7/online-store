@@ -11,7 +11,7 @@ namespace OnlineStore.BLL.AccountService
     public interface IAccountService
     {
         public Task<User> CreateAccount(Account newAccount);
-        public Task UpdateAccount(Account account);
+        public Task UpdateAccount(Account account, string id);
         public Task DeleteUser(string id);
         public Task<User> LogIn(RegUser logInRegUser);
         public Task<Account> GetUser(string id);

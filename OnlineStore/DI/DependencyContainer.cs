@@ -12,6 +12,7 @@ using OnlineStore.Validators;
 using Microsoft.Extensions.Options;
 using OnlineStore.BLL.AccountService.implementation;
 using OnlineStore.BLL.AccountService;
+using System.Reflection;
 
 namespace OnlineStore.DI
 {
@@ -94,7 +95,12 @@ namespace OnlineStore.DI
             services.AddControllers();
 
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+
+            services.AddSwaggerGen(options =>
+            {
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            });
         }
     }
 }
