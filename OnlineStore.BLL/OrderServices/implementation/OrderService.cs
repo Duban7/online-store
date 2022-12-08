@@ -6,10 +6,11 @@ using System.Linq.Expressions;
 using System.Security.Principal;
 using MongoDB.Bson;
 using MongoDB.Driver.Linq;
+using OnlineStore.BLL.OrderServices.Exceptions;
 
-namespace OnlineStore.BLL.OrderServices
+namespace OnlineStore.BLL.OrderServices.implementation
 {
-    public class OrderService
+    public class OrderService: IOrderService
     {
         private readonly IOrderRepository _orderrepository;
         private readonly IBasketRepository _basketrepository;
@@ -35,11 +36,8 @@ namespace OnlineStore.BLL.OrderServices
 
         public async Task<Order> CreateOrder(Basket newBasket)
         {
-            if (newBasket == null)
-            {
-                _logger.LogError("Basket doesn't exist");
-                return null;
-            }
+            if (newBasket == null) throw new BasketNotFoundException("Basket does not exist");
+            
             DateTime timeNow = DateTime.UtcNow;
             string id = ObjectId.GenerateNewId().ToString();
             Order newOrder = new Order()
@@ -57,21 +55,20 @@ namespace OnlineStore.BLL.OrderServices
         public async Task<bool> DeleteBasketProd(List<Basket> basket, string ProdId)
         {
             Basket getBasket = null;
-            if(basket != null)
+            if (basket != null)
             {
                 getBasket = basket[0];
-                
+
             }
             else
             {
-                _logger.LogError("User doesn't exist");
-                return false;
+                throw new BasketNotFoundException();
             }
             List<Product> ProdList = new List<Product>(getBasket.Products);
-            
-            foreach(Product prod in ProdList)
+
+            foreach (Product prod in ProdList)
             {
-                if(prod.Id == ProdId)
+                if (prod.Id == ProdId)
                 {
                     ProdList.Remove(prod);
                 }
@@ -81,7 +78,7 @@ namespace OnlineStore.BLL.OrderServices
             getBasket.Products = ProdList;
             await _basketrepository.UpdateAsync(getBasket);
             return true;
-            
+
         }
 
     }

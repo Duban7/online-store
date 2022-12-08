@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OnlineStore.BLL.OrderServices;
+using OnlineStore.BLL.OrderServices.implementation;
 using OnlineStore.Domain.Models;
+using OnlineStore.BLL.OrderServices;
 using System.Security.Principal;
 using static MongoDB.Driver.WriteConcern;
 
@@ -10,9 +11,9 @@ namespace OnlineStore.Controllers
     [Route("")]
     public class OrdersController : ControllerBase
     {
-        private readonly OrderService _orderService;
+        private readonly IOrderService _orderService;
 
-        public OrdersController(OrderService orderService)
+        public OrdersController(IOrderService orderService)
         {
             _orderService = orderService;
         }
@@ -38,7 +39,7 @@ namespace OnlineStore.Controllers
         
 
         [HttpPost]
-        [Route("clients/{IdUser}/basket")]
+        [Route("clients/basket")]
         public async Task<ActionResult<Order>> CreateNewOrder([FromBody] Basket newOrder)
         {
             Order order = await _orderService.CreateOrder(newOrder);

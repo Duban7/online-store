@@ -1,10 +1,8 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using OnlineStore.Domain.CustomAttribute;
 
 namespace OnlineStore.Domain.Models
 {
-    [BsonCollectionAttribute("Product")]
     public class Product
     {
         [BsonId]

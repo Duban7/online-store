@@ -1,69 +1,82 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using OnlineStore.BLL.OrderServices;
 using OnlineStore.DAL.Implementation;
 using OnlineStore.DAL.Interfaces;
-using OnlineStore.Options;
+using OnlineStore.BLL.Options;
 using MongoDB.Driver;
 using OnlineStore.DAL;
 using OnlineStore.Domain.Models;
 using Microsoft.Extensions.Options;
+using OnlineStore.BLL.OrderServices.implementation;
+using OnlineStore.BLL.OrderServices;
+using System.Reflection;
 
 namespace OnlineStore.DI
 {
     public static class DependencyContainer
     {
-        public static void RegisterDependency(this IServiceCollection service)
+        public static void RegisterDependency(this IServiceCollection services, ConfigurationManager configuration)
         {
-            service.AddAuthorization();
+            services.Configure<DatabaseSettings>(configuration.GetSection("OnlineStoreDatabase"));
 
-            service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
+            services.AddAuthorization();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
+                IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+                JwtOptions jwtOptions = serviceProvider.GetService<IOptions<JwtOptions>>().Value;
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = JwtOptions.ISSUER,
+                    ValidIssuer = jwtOptions.Issuer,
                     ValidateAudience = true,
-                    ValidAudience = JwtOptions.AUDIENCE,
+                    ValidAudience = jwtOptions.Audience,
                     ValidateLifetime = true,
-                    IssuerSigningKey = JwtOptions.GetSymmetricSecurityKey(),
+                    IssuerSigningKey = jwtOptions.GetSymmetricSecurityKey(),
                     ValidateIssuerSigningKey = true,
                 };
             });
-            service.AddSingleton<IMongoClient, MongoClient>((serviceProvider) =>
+            services.AddSingleton<IMongoClient, MongoClient>((serviceProvider) =>
             {
                 DatabaseSettings dbSettings = serviceProvider.GetService<IOptions<DatabaseSettings>>().Value;
                 return new MongoClient(dbSettings.ConnectionString);
             });
 
-            service.AddScoped<IMongoDatabase>((serviceProvider) =>
+            services.AddScoped<IMongoDatabase>((serviceProvider) =>
             {
                 DatabaseSettings dbSettings = serviceProvider.GetService<IOptions<DatabaseSettings>>().Value;
                 IMongoClient mongoClient = serviceProvider.GetService<IMongoClient>();
                 return mongoClient.GetDatabase(dbSettings.DatabaseName);
             });
 
-            service.AddScoped<IMongoCollection<Order>>((serviceProvider) =>
+            services.AddScoped<IMongoCollection<Order>>((serviceProvider) =>
             {
                 IMongoDatabase mongoDatabase = serviceProvider.GetService<IMongoDatabase>();
                 return mongoDatabase.GetCollection<Order>("Order");
             });
 
-            service.AddScoped<IMongoCollection<Basket>>((serviceProvider) =>
+            services.AddScoped<IMongoCollection<Basket>>((serviceProvider) =>
             {
                 IMongoDatabase mongoDatabase = serviceProvider.GetService<IMongoDatabase>();
                 return mongoDatabase.GetCollection<Basket>("Basket");
             });
 
-            service.AddTransient<IBasketRepository, BasketRepository>();
+            services.AddTransient<IBasketRepository, BasketRepository>();
 
-            service.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
             
-            service.AddTransient<OrderService>();
-            service.AddControllers();
+            services.AddTransient<OrderService>();
+            services.AddControllers();
 
-            service.AddEndpointsApiExplorer();
-            service.AddSwaggerGen();
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen(options =>
+            {
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            });
         }
     }
 }
