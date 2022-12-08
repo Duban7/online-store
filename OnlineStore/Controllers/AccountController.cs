@@ -3,7 +3,6 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineStore.BLL.AccountService;
-using OnlineStore.BLL.AccountService.implementation;
 using OnlineStore.BLL.AccountService.Model;
 using OnlineStore.Domain.Models;
 
@@ -163,7 +162,7 @@ namespace OnlineStore.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <response code="204"></response>
+        /// <response code="204">No content</response>
         /// <response code="400">Returns array of validation errors if validation fails</response>
         /// <response code="401">If account is missing</response>
         [HttpPut]
@@ -204,7 +203,7 @@ namespace OnlineStore.Controllers
         ///     GET /clients/{id}
         ///
         /// </remarks>
-        /// <response code="204"></response>
+        /// <response code="204">No content</response>
         /// <response code="401">If account is missing</response>
         [HttpDelete]
         [Route("clients/{id}")]
