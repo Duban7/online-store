@@ -1,12 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using OnlineStore.DAL.Interfaces;
-using OnlineStore.Domain.CustomAttribute;
 using OnlineStore.Domain.Models;
-using static MongoDB.Driver.WriteConcern;
-using System.Linq.Expressions;
 
 namespace OnlineStore.DAL.Implementation
 {
@@ -14,21 +9,13 @@ namespace OnlineStore.DAL.Implementation
     {
         private readonly IMongoCollection<Category> _categoryCollection;
 
-        public CategoryRepository(IOptions<DatabaseSettings> OnlineStoreDataBaseSettings)
+        public CategoryRepository(IMongoCollection<Category> categoryCollection)
         {
-            MongoClient mongoClient = new MongoClient(OnlineStoreDataBaseSettings.Value.ConnectionString);
-
-            IMongoDatabase mongoDataBase = mongoClient.GetDatabase(OnlineStoreDataBaseSettings.Value.DatabaseName);
-
-            _categoryCollection = mongoDataBase.GetCollection<Category>(GetCollectionName(typeof(Category)));
-        }
-        private protected string GetCollectionName(Type documentType)
-        {
-            return ((BsonCollectionAttribute)documentType.GetCustomAttributes(typeof(BsonCollectionAttribute), true).FirstOrDefault())?.CollectionName;
+            _categoryCollection = categoryCollection;
         }
 
-        public async Task<List<Category>?> GetAsync(Expression<Func<Category, bool>> predicant) =>
-            await _categoryCollection.Find(predicant).ToListAsync<Category>();
+        public async Task<List<Category>?> GetCategories() =>
+            await _categoryCollection.Find(x => true).ToListAsync<Category>();
 
         public async Task CreateAsync(Category newCategory) =>
             await _categoryCollection.InsertOneAsync(newCategory);
@@ -41,8 +28,12 @@ namespace OnlineStore.DAL.Implementation
 
         public async Task<Category?> GetOneByIdAsync(string id) =>
             await _categoryCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+        public string GenerateObjectID() =>
+            ObjectId.GenerateNewId().ToString();
     }
 }
+
 
 
 

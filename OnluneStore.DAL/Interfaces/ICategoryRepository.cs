@@ -3,8 +3,9 @@ using System.Linq.Expressions;
 
 namespace OnlineStore.DAL.Interfaces
 {
-    public interface ICategoryRepository:IRepository<Category>
+    public interface ICategoryRepository : IRepository<Category>
     {
-
+        public string GenerateObjectID();
+        public Task<List<Category>> GetCategories();
     }
 }

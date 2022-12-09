@@ -5,6 +5,7 @@ namespace OnlineStore.DAL.Interfaces
 {
     public interface ISubcategoryRepository : IRepository<Subcategory>
     {
-
+        public string GenerateObjectID();
+     
     }
 }

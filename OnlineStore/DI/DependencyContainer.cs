@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+﻿//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.IdentityModel.Tokens;
 using OnlineStore.BLL.ProductServices;
 using OnlineStore.DAL.Implementation;
 using OnlineStore.DAL.Interfaces;
@@ -13,19 +13,19 @@ namespace OnlineStore.DI
         {
             service.AddAuthorization();
 
-            service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = JwtOptions.ISSUER,
-                    ValidateAudience = true,
-                    ValidAudience = JwtOptions.AUDIENCE,
-                    ValidateLifetime = true,
-                    IssuerSigningKey = JwtOptions.GetSymmetricSecurityKey(),
-                    ValidateIssuerSigningKey = true,
-                };
-            });
+            //service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            //{
+            //    options.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidIssuer = JwtOptions.ISSUER,
+            //        ValidateAudience = true,
+            //        ValidAudience = JwtOptions.AUDIENCE,
+            //        ValidateLifetime = true,
+            //        IssuerSigningKey = JwtOptions.GetSymmetricSecurityKey(),
+            //        ValidateIssuerSigningKey = true,
+            //    };
+            //});
 
             service.AddTransient<IProductRepository, ProductRepository>();
 
