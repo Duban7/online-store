@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using OnlineStore.DAL.Interfaces;
 using OnlineStore.Domain.Models;
+using System.Linq.Expressions;
 
 namespace OnlineStore.DAL.Implementation
 {
@@ -14,6 +15,8 @@ namespace OnlineStore.DAL.Implementation
             _categoryCollection = categoryCollection;
         }
 
+        public async Task<List<Category>?> GetAsync(Expression<Func<Category, bool>> predicant) =>
+            await _categoryCollection.Find(predicant).ToListAsync<Category>();
         public async Task<List<Category>?> GetCategories() =>
             await _categoryCollection.Find(x => true).ToListAsync<Category>();
 
