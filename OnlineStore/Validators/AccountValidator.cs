@@ -8,8 +8,8 @@ namespace OnlineStore.Validators
     {
         public AccountValidator()
         {
-            string msg = "Ошибка в поле {PropertyName}: значение {PropertyValue}";
-            string lengthMsg = "Неверный размер поля {PropertyName}";
+            string msg = "Error in property {PropertyName}: value {PropertyValue}";
+            string lengthMsg = "Invalid length for {PropertyName}";
 
             RuleFor(acc => acc.User.Name)
                 .NotEmpty().WithMessage(msg);

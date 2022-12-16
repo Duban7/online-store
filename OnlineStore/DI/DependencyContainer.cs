@@ -63,7 +63,7 @@ namespace OnlineStore.DI
             {
                 IMongoDatabase mongoDatabase = serviceProvider.GetService<IMongoDatabase>();
 
-                return mongoDatabase.GetCollection<User>("User");
+                return mongoDatabase.GetCollection<User>("Users");
 
             });
 
@@ -71,14 +71,14 @@ namespace OnlineStore.DI
             {
                 IMongoDatabase mongoDatabase = serviceProvider.GetService<IMongoDatabase>();
 
-                return mongoDatabase.GetCollection<RegUser>("RegUser");
+                return mongoDatabase.GetCollection<RegUser>("RegUsers");
 
             });
 
             services.AddScoped<IMongoCollection<Basket>>((serviceProvider) =>
             {
                 IMongoDatabase mongoDatabase = serviceProvider.GetService<IMongoDatabase>();
-                return mongoDatabase.GetCollection<Basket>("User");
+                return mongoDatabase.GetCollection<Basket>("Baskets");
 
             });
 

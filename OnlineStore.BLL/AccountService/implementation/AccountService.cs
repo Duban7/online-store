@@ -113,7 +113,6 @@ namespace OnlineStore.BLL.AccountService.implementation
                 RegUser = await _regUserRepository.GetOneByIdAsync(id)
             };
 
-
         public string GenerateJwtToken(User user)
         {
             List<Claim> claims = new List<Claim>
