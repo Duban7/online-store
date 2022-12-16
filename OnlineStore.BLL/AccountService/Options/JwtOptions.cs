@@ -4,10 +4,10 @@ namespace OnlineStore.Options
 {
     public class JwtOptions
     {
-        public const string ISSUER = "OnlineStoreServer"; // издатель токена
-        public const string AUDIENCE = "OnlineStoreClient"; // потребитель токена
-        const string KEY = "HQaDbE2sMwIDAQABAoIBAEs63TvT94njrPDP3A/sfCEXg1F2y0D/PjzUhM1aJGcRiOUXnGlYdViGhLnnJoNZTZm9qI1LT";   // ключ для шифрации
-        public static SymmetricSecurityKey GetSymmetricSecurityKey() =>
-            new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(KEY));
+        public string Issuer { get; set; } //= "OnlineStoreServer"; // издатель токена
+        public string Audience { get; set; } //= "OnlineStoreClient"; // потребитель токена
+        public string Key { get; set; } //= "HQaDbE2sMwIDAQABAoIBAEs63TvT94njrPDP3A/ssfCEXg1F2y0D/PjzUhM1aJGcRiOUXnGlYdViGhLnnJoNZTZm9qI1LT";   // ключ для шифрации
+        public SymmetricSecurityKey GetSymmetricSecurityKey() =>
+            new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Key));
     }
 }

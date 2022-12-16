@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using OnlineStore.BLL.AccountService.Model;
+using System.Text.RegularExpressions;
 
 namespace OnlineStore.Validators
 {
@@ -7,7 +8,8 @@ namespace OnlineStore.Validators
     {
         public AccountValidator()
         {
-            string msg = "Ошибка в поле {PropertyName}: значение {PropertyValue}";
+            string msg = "Error in property {PropertyName}: value {PropertyValue}";
+            string lengthMsg = "Invalid length for {PropertyName}";
 
             RuleFor(acc => acc.User.Name)
                 .NotEmpty().WithMessage(msg);
@@ -16,57 +18,25 @@ namespace OnlineStore.Validators
                 .EmailAddress().WithMessage(msg);
 
             RuleFor(acc => acc.User.Phone)
-                .Length(12).WithMessage(msg)
+                .Length(12).WithMessage(lengthMsg)
                 .Must(IsPhoneValid).WithMessage(msg);
 
             RuleFor(acc=>acc.RegUser.Login)
-                .Length(8,30).WithMessage(msg)
+                .Length(8,30).WithMessage(lengthMsg)
                 .Must(IsLoginValid).WithMessage(msg);
 
             RuleFor(acc=>acc.RegUser.Password)
-                .Length(8,30).WithMessage(msg)
+                .Length(8,30).WithMessage(lengthMsg)
                 .Must(IsPasswordValid).WithMessage(msg);
         }
 
-        public bool IsPhoneValid(string phone)
-        {
-            int phoneLength = -1;
-            if (phone.StartsWith("375")) phoneLength = 12;
-            if (phone.StartsWith("7")) phoneLength = 10;
+        public bool IsPhoneValid(string phone)=>
+            Regex.IsMatch(phone, @"(?=.{10,12}$)(375[0-9]{9}$)|(7[0-9]{9}$)");
 
-            if (phone.Length != phoneLength) return false;
+        public bool IsLoginValid(string login)=>
+             Regex.IsMatch(login, @"[0-9a-zA-Z_\-]{8,20}");
 
-            foreach (char c in phone)
-                if (!Char.IsDigit(c)) return false;
-
-            return true;
-        }
-
-        public bool IsLoginValid(string login)
-        {
-            char[] validSymbols = { '-', '_' };
-
-            foreach (Char c in login)
-                if (!(Char.IsLetter(c) || Char.IsDigit(c) || validSymbols.Contains(c))) return false;
-
-            return true;
-        }
-
-        public bool IsPasswordValid(string password)
-        {
-            bool hasUpperCaseLetter = false, hasLowerCaseLetter = false, hasDigit = false;
-
-            char[] validSymbols = { '-', '_' };
-
-            foreach (Char c in password)
-            {
-                if (!(Char.IsLetter(c) || Char.IsDigit(c) || validSymbols.Contains(c))) return false;
-                if (Char.IsUpper(c)) hasUpperCaseLetter = true;
-                if (Char.IsLower(c)) hasLowerCaseLetter = true;
-                if (Char.IsDigit(c)) hasDigit = true;
-            }
-
-            return hasUpperCaseLetter && hasLowerCaseLetter && hasDigit;
-        }
+        public bool IsPasswordValid(string password)=>
+             Regex.IsMatch(password, @"(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])[0-9a-zA-Z_\-]{8,20}");
     }
 }

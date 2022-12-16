@@ -1,12 +1,16 @@
-using OnlineStore.DAL;
+using Microsoft.AspNetCore.Diagnostics;
+using OnlineStore.BLL.AccountService.Exceptions;
 using OnlineStore.DI;
+using OnlineStore.middleware;
+using System.Net.Mime;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("OnlineStoreDatabase"));
-DependencyContainer.RegisterDependency(builder.Services);
+DependencyContainer.RegisterDependency(builder.Services, builder.Configuration);
 
 var app = builder.Build();
+
+app.UseMiddleware<ErrorHandlerMiddlaware>();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

@@ -4,7 +4,8 @@ window.onmousedown = function(event) {
     if (event.target == modal) {
         needToHide = true;
     }
-}        
+}      
+
 window.onmouseup = function(event){
     const modal = document.getElementsByClassName('modal')[0];
     if(event.target == modal && needToHide){
@@ -147,7 +148,7 @@ async function logIn(e){
     let login = document.getElementById("formLoginInput").value;
     let password = document.getElementById("formPasswordInput").value;
     if(login!=='' && password !==''){
-        const response = await fetch("/clients/authorisation", {
+        const response = await fetch("/clients/log-in", {
             method: "POST",
             headers: { "Accept": "application/json", "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -184,7 +185,7 @@ async function registration(e){
     let email = document.getElementById('formEmailInput').value;
     let phone = document.getElementById('formPhoneInput').value;
     if(login !== '' && password !== '' && name !== '' && email !== '' && phone !== ''){
-        const response = await fetch("/clients/registration", {
+        const response = await fetch("/clients/new", {
             method: "POST",
             headers: { "Accept": "application/json", "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -221,7 +222,7 @@ async function updateAccount(e){
     const id = sessionStorage.getItem('id');
     const token = sessionStorage.getItem('JwtToken');
     if(loginInput.value !== '' && passwordInput.value !== '' && nameInput.value !== '' && emailInput.value !== '' && phoneInput.value !== '' && id!==null && token!==null){
-        const response = await fetch("/clients/update", {
+        const response = await fetch("/clients/"+id, {
             method: "PUT",
             headers: { "Accept": "application/json", "Content-Type": "application/json", "Authorization": "Bearer " + token },
             body: JSON.stringify({

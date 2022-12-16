@@ -1,10 +1,8 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using OnlineStore.Domain.CustomAttribute;
 
 namespace OnlineStore.Domain.Models
 {
-    [BsonCollectionAttribute("Subcategory")]
     public class Subcategory
     {
         [BsonId]

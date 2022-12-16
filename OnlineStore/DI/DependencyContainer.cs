@@ -1,49 +1,106 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using OnlineStore.BLL.AccountService;
+using MongoDB.Driver;
 using OnlineStore.BLL.AccountService.Model;
+using OnlineStore.DAL;
 using OnlineStore.DAL.Implementation;
 using OnlineStore.DAL.Interfaces;
+using OnlineStore.Domain.Models;
 using OnlineStore.Options;
 using OnlineStore.Validators;
+using Microsoft.Extensions.Options;
+using OnlineStore.BLL.AccountService.implementation;
+using OnlineStore.BLL.AccountService;
+using System.Reflection;
 
 namespace OnlineStore.DI
 {
     public static class DependencyContainer
     {
-        public static void RegisterDependency(this IServiceCollection service)
+        public static void RegisterDependency(this IServiceCollection services, ConfigurationManager configuration)
         {
-            service.AddAuthorization();
+            services.Configure<DatabaseSettings>(configuration.GetSection("OnlineStoreDatabase"));
 
-            service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
+
+            services.AddAuthorization();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
+                IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+                JwtOptions jwtOptions = serviceProvider.GetService<IOptions<JwtOptions>>().Value;
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = JwtOptions.ISSUER,
+                    ValidIssuer = jwtOptions.Issuer,
                     ValidateAudience = true,
-                    ValidAudience = JwtOptions.AUDIENCE,
+                    ValidAudience = jwtOptions.Audience,
                     ValidateLifetime = true,
-                    IssuerSigningKey = JwtOptions.GetSymmetricSecurityKey(),
+                    IssuerSigningKey = jwtOptions.GetSymmetricSecurityKey(),
                     ValidateIssuerSigningKey = true,
                 };
             });
 
-            service.AddTransient<IUserRepository, UserRepository>();
+            services.AddSingleton<IMongoClient, MongoClient>((serviceProvider) =>
+            {
+                DatabaseSettings dbSettings = serviceProvider.GetService<IOptions<DatabaseSettings>>().Value;
 
-            service.AddTransient<IRegUserRepository, RegUserRepository>();
+                return new MongoClient(dbSettings.ConnectionString);
+            });
 
-            service.AddTransient<IBasketRepository, BasketRepository>();
+            services.AddScoped<IMongoDatabase>((serviceProvider) =>
+            {
+                DatabaseSettings dbSettings = serviceProvider.GetService<IOptions<DatabaseSettings>>().Value;
+                IMongoClient mongoClient = serviceProvider.GetService<IMongoClient>();
 
-            service.AddScoped<IValidator<Account>, AccountValidator>();
+                return mongoClient.GetDatabase(dbSettings.DatabaseName);
+            });
 
-            service.AddTransient<AccountService>();
+            services.AddScoped<IMongoCollection<User>>((serviceProvider) =>
+            {
+                IMongoDatabase mongoDatabase = serviceProvider.GetService<IMongoDatabase>();
 
-            service.AddControllers();
+                return mongoDatabase.GetCollection<User>("Users");
 
-            service.AddEndpointsApiExplorer();
-            service.AddSwaggerGen();
+            });
+
+            services.AddScoped<IMongoCollection<RegUser>>((serviceProvider) =>
+            {
+                IMongoDatabase mongoDatabase = serviceProvider.GetService<IMongoDatabase>();
+
+                return mongoDatabase.GetCollection<RegUser>("RegUsers");
+
+            });
+
+            services.AddScoped<IMongoCollection<Basket>>((serviceProvider) =>
+            {
+                IMongoDatabase mongoDatabase = serviceProvider.GetService<IMongoDatabase>();
+                return mongoDatabase.GetCollection<Basket>("Baskets");
+
+            });
+
+            services.AddTransient<IUserRepository, UserRepository>();
+
+            services.AddTransient<IRegUserRepository, RegUserRepository>();
+
+            services.AddTransient<IBasketRepository, BasketRepository>();
+
+            services.AddScoped<IValidator<Account>, AccountValidator>();
+
+            services.AddTransient<IAccountService, AccountService>();
+
+            services.AddControllers();
+
+            services.AddEndpointsApiExplorer();
+
+            services.AddSwaggerGen(options =>
+            {
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            });
         }
     }
 }
